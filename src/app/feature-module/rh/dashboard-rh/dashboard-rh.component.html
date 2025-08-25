@@ -1,0 +1,240 @@
+<div class="content">
+  <!-- Breadcrumb -->
+  <div class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3">
+    <app-breadcrumbs title="Admin Dashboard" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+    <div class="d-flex my-xl-auto right-content align-items-center flex-wrap">
+      <app-collapse-header></app-collapse-header>
+    </div>
+  </div>
+  <!-- /Breadcrumb -->
+
+  <!-- Welcome Wrap -->
+  <div class="welcome-wrap mb-4">
+    <div class=" d-flex align-items-center justify-content-between flex-wrap">
+      <div class="mb-3">
+        <h2 class="mb-1 text-white">Bonjour, {{userAuthentified?.first_name}}</h2>
+      </div>
+
+    </div>
+    <div class="welcome-bg">
+      <img src="assets/img/bg/welcome-bg-02.svg" alt="img" class="welcome-bg-01">
+      <img src="assets/img/bg/welcome-bg-03.svg" alt="img" class="welcome-bg-02">
+      <img src="assets/img/bg/welcome-bg-01.svg" alt="img" class="welcome-bg-03">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="row row-cols-5">
+        <div class="col">
+          <div class="card flex-fill">
+            <div class="card-body">
+              <span class="avatar rounded-circle bg-primary mb-2">
+                <i class="ti ti-calendar-share fs-16"></i>
+              </span>
+              <h6 class="fs-13 fw-medium text-default mb-1">
+                Entreprises
+              </h6>
+              <h3 class="mb-3">
+                {{dashStats.total_company}}
+              </h3>
+
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card flex-fill">
+            <div class="card-body">
+              <span class="avatar rounded-circle bg-secondary mb-2">
+                <i class="ti ti-browser fs-16"></i>
+              </span>
+              <h6 class="fs-13 fw-medium text-default mb-1">
+                Activités
+              </h6>
+              <h3 class="mb-3">
+                {{dashStats.total_activity}}
+
+              </h3>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card flex-fill">
+            <div class="card-body">
+              <span class="avatar rounded-circle bg-info mb-2">
+                <i class="ti ti-users-group fs-16"></i>
+              </span>
+              <h6 class="fs-13 fw-medium text-default mb-1">
+                RHs
+              </h6>
+              <h3 class="mb-3">
+                {{dashStats.total_RH}}
+
+              </h3>
+
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card flex-fill">
+            <div class="card-body">
+              <span class="avatar rounded-circle bg-pink mb-2">
+                <i class="ti ti-checklist fs-16"></i>
+              </span>
+              <h6 class="fs-13 fw-medium text-default mb-1">
+                Superviseurs
+              </h6>
+              <h3 class="mb-3">
+                {{dashStats.total_Sup}}
+
+              </h3>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card flex-fill">
+            <div class="card-body">
+              <span class="avatar rounded-circle bg-dark mb-2">
+                <i class="ti ti-user-star fs-16"></i>
+              </span>
+              <h6 class="fs-13 fw-medium text-default mb-1">Techniciens</h6>
+              <h3 class="mb-3">
+                {{dashStats.total_Technician}}
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /Welcome Wrap -->
+  <div class="row">
+    <div class="col-xl-8 d-flex">
+      <div class="card flex-fill">
+        <div class="card-header pb-2 d-flex align-items-center justify-content-between flex-wrap">
+          <h5 class="mb-2">Total des demandes de congés</h5>
+        </div>
+        <div class="card-body pb-0">
+          <div class="d-flex align-items-center justify-content-between flex-wrap">
+            <div class="d-flex align-items-center mb-1">
+              <p class="fs-13 text-gray-9 me-3 mb-0">
+                <i class="ti ti-square-filled me-2" style="color:#177DBC"></i>Demandes
+              </p>
+            </div>
+          </div>
+
+          <apx-chart [series]="SalesIncome.series" [chart]="SalesIncome.chart" [colors]="SalesIncome.colors"
+            [fill]="SalesIncome.fill" [xaxis]="SalesIncome.xaxis" [yaxis]="SalesIncome.yaxis"
+            [responsive]="SalesIncome.responsive" [dataLabels]="SalesIncome.dataLabels"
+            [plotOptions]="SalesIncome.plotOptions" [grid]="SalesIncome.grid" [legend]="SalesIncome.legend">
+          </apx-chart>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-xxl-4">
+      <div class="card flex-fill">
+        <div class="card-header pb-2 d-flex align-items-center justify-content-between flex-wrap">
+          <h5 class="mb-2">Aperçu des demandes</h5>
+        </div>
+        <div class="card-body">
+          <div class="chartjs-wrapper-demo position-relative mb-4">
+            <canvas id="attendancedoughcharts1" height="200" class="h-200"></canvas>
+            <div class="position-absolute text-center attendance-canvas">
+              <p class="fs-13 mb-1">Total</p>
+              <h3>{{ requestsTotal }}</h3>
+            </div>
+          </div>
+
+          <h6 class="mb-3">Répartition</h6>
+
+          <ng-container *ngFor="let it of requestsLegend">
+            <div class="d-flex align-items-center justify-content-between">
+              <p class="f-13 mb-2">
+                <i class="ti ti-circle-filled me-1" [ngStyle]="{'color': it.color}"></i>
+                {{ it.label }}
+              </p>
+              <p class="f-13 fw-medium text-gray-9 mb-2">{{ it.valuePct }}%</p>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <div class="row">
+    <!-- Sales Overview -->
+    <div class="col-xl-7 d-flex">
+      <div class="card flex-fill">
+        <div class="card-header pb-2 d-flex align-items-center justify-content-between flex-wrap">
+          <h5 class="mb-2">Nombre total de pointages aujourd'hui {{nbTotalPointages}}</h5>
+          <div class="d-flex align-items-center">
+
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-nowrap mb-0">
+              <thead>
+                <tr>
+                  <th>Nom complet</th>
+                  <th>Début matin</th>
+                  <th>Fin matin</th>
+                  <th>Début après-midi</th>
+                  <th>Début après-midi</th>
+                  <th>Lieu</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of attendances">
+                  <td>
+                    <a [routerLink]="" class="link-default">{{item.first_name || '-'}}
+                      {{item.last_name|| '-'}} </a>
+                  </td>
+                  <td>
+                    <h6 class="fw-medium">
+                      <a [routerLink]="">{{item.start_morning || '-'}} </a>
+                    </h6>
+                  </td>
+                  <td>
+                    {{item.end_morning || '-'}}
+                  </td>
+                  <td>
+                    {{item.start_afternoon || '-'}}
+                  </td>
+                  <td>{{item.end_afternoon || '-'}}</td>
+                  <td>
+                    {{item.location || '-'}}
+                  </td>
+                </tr>
+                <tr *ngIf="!loading && attendances.length === 0">
+                  <td colspan="6" class="text-center">Aucune donnée trouvée pour aujourd'hui.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-5 d-flex">
+      <div class="card flex-fill">
+        <div class="card custom-card">
+          <div class="card-header">
+            <div class="card-title">Map des techniciens du jour</div>
+          </div>
+          <div class="card-body">
+            <div id="map-popup" style="height: 450px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /Invoices -->
+  </div>
+
+
+</div>

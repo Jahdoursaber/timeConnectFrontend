@@ -1,0 +1,84 @@
+<div class="container-fuild">
+  <div class="w-100 overflow-hidden position-relative flex-wrap d-block vh-100">
+      <div class="row">
+          <div class="col-lg-5">
+              <div class="d-lg-flex align-items-center justify-content-center d-none flex-wrap vh-100 bg-primary-transparent">
+                  <div>
+                      <img src="assets/img/bg/authentication-bg-03.svg" alt="Img">
+                  </div>
+              </div>
+          </div>
+          <div class="col-lg-7 col-md-12 col-sm-12">
+              <div class="row justify-content-center align-items-center vh-100 overflow-auto flex-wrap ">
+                  <div class="col-md-7 mx-auto vh-100">
+                      <form class="vh-100" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                          <div class="vh-100 d-flex flex-column justify-content-between p-4 pb-0">
+                              <div class=" mx-auto mb-5 text-center">
+                                  <img src="assets/img/logo.svg"
+                                      class="img-fluid" alt="Logo">
+                              </div>
+                              <div class="">
+                                  <div class="text-center mb-3">
+                                      <h2 class="mb-2">Se connecter</h2>
+                                      <p class="mb-0">Connectez-vous pour continuer vers TimeConnect.</p>
+                                  </div>
+                                  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+                                  <div class="mb-3">
+                                    <label for="validationCustom01" class="form-label">Email</label>
+                                      <div class="input-group">
+                                          <input type="email" formControlName="email" placeholder="Email"
+                                          id="validationCustom01" class="form-control border-end-0">
+                                          <span class="input-group-text border-start-0">
+                                              <i class="ti ti-mail"></i>
+                                          </span>
+                                      </div>
+                                  </div>
+                                  <div class="mb-3">
+                                    <label for="validationCustom02" class="form-label">Password</label>
+                                      <div class="pass-group">
+                                          <input
+                                          [type]="password[0] ? 'text' : 'password'"
+                                          class="pass-input form-control" formControlName="password" placeholder="Mot de passe"
+                                        />
+                                        <span
+                                          class="ti toggle-password"
+                                          [ngClass]="password[0] ? 'ti-eye' : 'ti-eye-off'"
+                                          (click)="togglePassword(0)"
+                                          (keydown.enter)="togglePassword(0)"
+                                          tabindex="0"
+                                        ></span>
+                                        </div>
+                                  </div>
+                                  <div class="d-flex align-items-center justify-content-between mb-3">
+
+                                      <div class="text-end">
+                                          <a [routerLink]="routes.forgotpassword2" class="link-danger">Forgot
+                                              Password?</a>
+                                      </div>
+                                  </div>
+                                  <div class="mb-12">
+                                    <button type="submit" class="btn btn-primary w-100" [disabled]="loginForm.invalid || loading">
+                                      {{ loading ? 'Loading...' : 'Se connecter' }}
+                                    </button>
+                                    <!--<div  class="loader"></div>-->
+                                  </div>
+                                  <div class="text-center">
+
+                                  </div>
+                                  <div class="login-or">
+                                      <span class="span-or"></span>
+                                  </div>
+
+                              </div>
+                              <div class="mt-5 pb-4 text-center">
+                                  <p class="mb-0 text-gray-9"></p>
+                              </div>
+                          </div>
+                      </form>
+                  </div>
+
+              </div>
+          </div>
+      </div>
+  </div>
+</div>

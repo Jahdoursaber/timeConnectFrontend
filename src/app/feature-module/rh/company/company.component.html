@@ -1,0 +1,208 @@
+<div class="content">
+
+  <!-- Breadcrumb -->
+  <div class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3">
+    <app-breadcrumbs title="Entreprise" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+      <div class="d-flex my-xl-auto right-content align-items-center flex-wrap ">
+
+          <div class="mb-2">
+              <a href="javascript:void(0);" (click)="openAddModal()" data-bs-toggle="modal"  data-bs-target="#add_companyid" class="btn btn-primary d-flex align-items-center"><i class="ti ti-circle-plus me-2"></i>Ajouter</a>
+          </div>
+          <app-collapse-header></app-collapse-header>
+      </div>
+  </div>
+  <!-- /Breadcrumb -->
+
+  <!-- Leads List -->
+  <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+          <h5>Liste des entreprises</h5>
+          <div class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3">
+
+          </div>
+      </div>
+      <div class="card-body p-0">
+        <div class="custom-datatable-filter ">
+          <div class="dataTables_wrapper dt-bootstrap5 no-footer">
+            <div class="row">
+              <div class="col-sm-12 col-md-6">
+                <div class="dataTables_length">
+                  <label [htmlFor]=""> Row Per Page
+                    <select [(ngModel)]="pageSize" (ngModelChange)="changePageSize(pageSize)" class="form-select form-select-sm">
+                      <option value="10">10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                    Entries
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-6">
+                <div id="DataTables_Table_0_filter" class="dataTables_filter">
+                  <label [htmlFor]="">
+                    <input [(ngModel)]="searchDataValue" [ngModelOptions]="{ standalone: true }"
+                        (ngModelChange)="searchData(searchDataValue)" type="search" class="form-control form-control-sm"
+                        placeholder="Rechercher" />
+                </label>
+                </div>
+            </div>
+            </div>
+              <div class=" table-responsive">
+                <table matSort (matSortChange)="sortData($event)" class="mat-sort table datanew table-center datatable dataTable  mb-0">
+                  <thead class="thead-light">
+                    <tr>
+                      <th >Nom de l'entreprise</th>
+                      <th >Addresse</th>
+                      <th >Email</th>
+                      <th >N°Siret</th>
+                      <th >Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    <tr *ngFor="let c of tableData; trackBy: trackById">
+                      <td><p class="fs-14 text-dark fw-medium">{{ c.company_name }}</p></td>
+                      <td>{{ c.address }}</td>
+                      <td>{{ c.email }}</td>
+                      <td>{{ c.num_siret }}</td>
+
+                      <td>
+                        <div class="action-icon d-inline-flex">
+                          <a href="javascript:void(0);" (click)="loadCompanyById(c.id)"  class="me-2" data-bs-toggle="modal" data-bs-target="#edit_activity"><i class="ti ti-edit"></i></a>
+                          <a href="javascript:void(0);" (click)="confirmDelete(c.id)" data-bs-toggle="modal"  ><i class="ti ti-trash"></i></a>
+                        </div>
+                      </td>
+                    </tr>
+
+
+                    <tr *ngIf="tableData.length === 0">
+                      <td colspan="10">
+                        <h5 class="no-record">Aucune entreprise</h5>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div>
+              <app-custom-pagination></app-custom-pagination>
+          </div>
+        </div>
+      </div>
+  </div>
+  <!-- /Leads List -->
+
+</div>
+  <!-- Add Activiy -->
+  <div class="modal fade" id="add_companyid">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">
+
+            </h4>
+          <button type="button" class="btn-close custom-btn-close" data-bs-dismiss="modal" aria-label="Close">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+        <form [formGroup]="myFormCompany" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
+          <div class="modal-body pb-0">
+            <div class="row">
+              <div class="col-md-12">
+                </div>
+                <div class="mb-3">
+                  <label for="validationCustom01" class="form-label">Nom de l'entreprise</label>
+                  <input type="text" id="validationCustom01" class="form-control" formControlName="company_name"  placeholder="Company name" [ngClass]="{'is-invalid': myFormCompany.get('company_name')?.invalid && myFormCompany.get('company_name')?.touched, 'is-valid': myFormCompany.get('company_name')?.valid}" />
+                  <div *ngIf="myFormCompany.get('company_name')?.invalid && myFormCompany.get('company_name')?.touched" class="invalid-feedback">
+                    Please provide a company name.
+                  </div>
+                  <div *ngIf="myFormCompany.get('company_name')?.valid" class="valid-feedback">
+
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="validationCustom02" class="form-label">Adresse</label>
+                  <input type="text" id="validationCustom02" class="form-control" formControlName="address" placeholder="Address" [ngClass]="{'is-invalid': myFormCompany.get('address')?.invalid && myFormCompany.get('address')?.touched, 'is-valid': myFormCompany.get('address')?.valid}" />
+                  <div *ngIf="myFormCompany.get('address')?.invalid && myFormCompany.get('address')?.touched" class="invalid-feedback">
+                    Please provide an address.
+                  </div>
+                  <div *ngIf="myFormCompany.get('address')?.valid" class="valid-feedback">
+
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="validationCustom03" class="form-label">SIRET</label>
+                  <input type="text" class="form-control" id="validationCustom03" formControlName="num_siret" placeholder="N°Siret" [ngClass]="{'is-invalid': myFormCompany.get('num_siret')?.invalid && myFormCompany.get('num_siret')?.touched, 'is-valid': myFormCompany.get('num_siret')?.valid}" />
+                  <div *ngIf="myFormCompany.get('num_siret')?.invalid && myFormCompany.get('num_siret')?.touched" class="invalid-feedback">
+                    Please provide a number siret.
+                  </div>
+                  <div *ngIf="myFormCompany.get('num_siret')?.valid" class="valid-feedback">
+
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="validationCustom04" class="form-label">Email</label>
+                  <input type="email" id="validationCustom04" class="form-control" formControlName="email" placeholder="Email" [ngClass]="{'is-invalid': myFormCompany.get('email')?.invalid && myFormCompany.get('email')?.touched, 'is-valid': myFormCompany.get('email')?.valid}"/>
+                  <div *ngIf="myFormCompany.get('email')?.invalid && myFormCompany.get('email')?.touched" class="invalid-feedback">
+                    Please provide an email.
+                  </div>
+                  <div *ngIf="myFormCompany.get('email')?.valid" class="valid-feedback">
+
+                  </div>
+                </div>
+                <div class="mb-3">
+
+                  <label for="validationCustom05" class="form-label">Convention Collective</label>
+                  <mat-select class="select custom-mat-select" id="validationCustom05" formControlName="collective_id">
+                    <mat-option [value]="null">-- Aucune --</mat-option>
+                    <mat-option
+                      *ngFor="let collective of collectives"
+                      [value]="collective.id"
+                    >
+                      {{ collective.title }} ({{ collective.idcc }})
+                    </mat-option>
+                  </mat-select>
+                </div>
+                <div class="mb-3">
+                  <label  for="validationCustom06" class="form-label">Code APE</label>
+                  <mat-select class="form-select" id="validationCustom06" formControlName="ape_id">
+                    <option [value]="null">-- Aucun --</option>
+                    <mat-option *ngFor="let ape of apes" [value]="ape.id">
+                      {{ ape.code_ape }} - {{ ape.label }}
+                    </mat-option>
+                  </mat-select>
+                </div>
+              </div>
+            </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Annuler</button>
+            <button type="submit" class="btn btn-primary">
+              {{ isEditMode ? 'Modifier' : 'Enregistrer' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- /Add Activity -->
+
+<!--delete activity-->
+<div class="modal fade" id="delete_modal_company">
+  <div class="modal-dialog modal-dialog-modal-sm">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <span class="avatar avatar-xl bg-transparent-danger text-danger mb-3">
+          <i class="ti ti-trash-x fs-36"></i>
+        </span>
+        <h4 class="mb-1">Confirm Delete</h4>
+        <p class="mb-3">You want to delete all the marked items, this cant be undone once you delete.</p>
+        <div class="d-flex justify-content-center">
+          <a href="javascript:void(0);" class="btn btn-light me-3" data-bs-dismiss="modal">Cancel</a>
+          <a href="javascript:void(0);" (click)="deleteSelectedCompany()" class="btn btn-danger" data-bs-dismiss="modal">Yes, Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

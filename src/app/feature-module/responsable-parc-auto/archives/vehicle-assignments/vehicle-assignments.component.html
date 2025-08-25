@@ -1,0 +1,126 @@
+<div class="content">
+   <p-toast position="top-right"></p-toast>
+  <!-- Breadcrumb -->
+  <div class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3">
+    <app-breadcrumbs title="Historique d'affectations" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+      <div class="d-flex my-xl-auto right-content align-items-center flex-wrap ">
+
+
+          <app-collapse-header></app-collapse-header>
+      </div>
+  </div>
+
+
+<!-- Erreur -->
+<div *ngIf="formErrorMessage" class="alert alert-danger" role="alert" style="width:100%">
+  {{ formErrorMessage }}
+</div>
+  <!-- /Breadcrumb -->
+
+  <!-- Leads List -->
+  <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+          <h5>Liste des modèles</h5>
+          <div class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3">
+
+          </div>
+      </div>
+      <div class="card-body p-0">
+        <div class="custom-datatable-filter ">
+          <div class="dataTables_wrapper dt-bootstrap5 no-footer">
+            <div class="row">
+              <div class="col-sm-12 col-md-6">
+                <div class="dataTables_length">
+                  <label [htmlFor]=""> Row Per Page
+                    <select [(ngModel)]="pageSize" (ngModelChange)="changePageSize(pageSize)" class="form-select form-select-sm">
+                      <option value="10">10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                    Entries
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-6">
+                <div id="DataTables_Table_0_filter" class="dataTables_filter">
+                    <label [htmlFor]="">
+                        <input [(ngModel)]="searchDataValue" [ngModelOptions]="{ standalone: true }"
+                            (ngModelChange)="searchData(searchDataValue)" type="search" class="form-control form-control-sm"
+                            placeholder="Rechercher" />
+                    </label>
+                </div>
+            </div>
+            </div>
+            <form [formGroup]="filterForm" (ngSubmit)="onSearchHistory()" class="row mb-3 align-items-end g-2">
+                <div class="col-md-3">
+                  <label for="vehicule_id" class="form-label mb-0">Véhicule</label>
+                  <select class="form-select" formControlName="vehicule_id" id="vehicule_id">
+                    <option value="0">Tous les véhicules</option>
+                    <option *ngFor="let v of vehicles" [value]="v.id">{{ v.plaque_immatriculation }}</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label for="technicien_id" class="form-label mb-0">Technicien</label>
+                  <select class="form-select" formControlName="technicien_id" id="technicien_id">
+                    <option value="0">Tous les techniciens</option>
+                    <option *ngFor="let t of technicians" [value]="t.id">{{ t.first_name }} {{ t.last_name }}</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label for="mois_annee" class="form-label mb-0">Mois</label>
+                  <input type="month" class="form-control" formControlName="mois_annee" id="mois_annee"/>
+                </div>
+                <div class="col-md-2">
+                  <button class="btn btn-primary w-100" type="submit">Filtrer</button>
+                </div>
+              </form>
+
+              <div class=" table-responsive">
+                <table matSort (matSortChange)="sortData($event)" class="mat-sort table datanew table-center datatable dataTable  mb-0">
+                  <thead class="thead-light">
+                    <tr>
+                      <th mat-sort-header="Responsable">Responsable</th>
+                      <th mat-sort-header="Véhicule">Véhicule</th>
+                      <th mat-sort-header="Entreprise">Entreprise</th>
+                      <th mat-sort-header="Activité">Activité</th>
+                      <th mat-sort-header="Technicien">Technicien</th>
+                      <th mat-sort-header="Affectation">Affectation</th>
+                      <th mat-sort-header="Demande de restitution">Demande de restitution</th>
+                      <th mat-sort-header="restitution">restitution<th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    <tr *ngFor="let v of tableData; trackBy: trackById">
+                      <td><p class="fs-14 text-dark fw-medium">{{v.prenom_responsable}} {{v.nom_responsable}}</p></td>
+                      <td>{{ v.plaque_immatriculation  }}</td>
+                      <td>{{ v.company_name }}</td>
+                      <td>{{ v.activity_name  }}</td>
+                      <td>{{ v.prenom_technicien  }} {{v.nom_technicien}}</td>
+                      <td>{{v.date_affectation | date:'dd-MM-yyyy HH:mm'}}</td>
+                      <td> {{v.date_demande_depot | date:'dd-MM-yyyy HH:mm' }}</td>
+                      <td> {{v.date_depot | date:'dd-MM-yyyy HH:mm'}}</td>
+
+                    </tr>
+
+
+                    <tr *ngIf="!loading && tableData.length === 0">
+                      <td colspan="10">
+                        <h5 class="no-record">Aucune donnée disponible</h5>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div>
+            <app-custom-pagination></app-custom-pagination>
+          </div>
+        </div>
+      </div>
+  </div>
+  <!-- /Leads List -->
+
+</div>
+
+

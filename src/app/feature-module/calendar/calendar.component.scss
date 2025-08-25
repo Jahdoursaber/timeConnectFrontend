@@ -1,0 +1,120 @@
+/* -- Conteneur général -- */
+.calendar-table-container {
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 12px #0001;
+  margin-bottom: 1.5rem;
+  overflow-x: auto; /* scroll par défaut, mais ajusté selon la vue */
+  transition: box-shadow 0.2s;
+}
+
+.calendar-table-container.week-view {
+  overflow-x: unset !important;
+}
+
+.calendar-table-container.month-view {
+  overflow-x: auto !important;
+}
+
+/* -- Table -- */
+.calendar-table {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  min-width: unset !important;
+  box-shadow: none;
+  table-layout: auto;
+}
+
+/* Vue Mois : table plus large */
+.calendar-table-container.month-view .calendar-table {
+  min-width: 1000px !important;
+  width: max-content;
+}
+
+/* Vue Semaine : table fluide, pas de min-width */
+.calendar-table-container.week-view .calendar-table {
+  min-width: unset !important;
+  width: 100% !important;
+}
+
+/* -- En-tête (thead) -- */
+.calendar-table thead th {
+  background: #fff !important;
+  border-top: none !important;
+  border-bottom: 2px solid #f1f1f1 !important;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 9px 0;
+  color: #1a1a1a;
+}
+
+/* Border radius seulement sur les coins du premier et dernier th */
+.calendar-table thead th:first-child {
+  border-top-left-radius: 12px;
+}
+.calendar-table thead th:last-child {
+  border-top-right-radius: 12px;
+}
+
+/* Team member - largeur personnalisée */
+.calendar-table-container .calendar-table th:first-child,
+.calendar-table-container .calendar-table td:first-child {
+  min-width: 130px;
+  max-width: 170px;
+  width: 140px;
+  padding-left: 14px;
+  background: #fff !important;
+}
+
+.calendar-table-container.week-view .calendar-table th:first-child,
+.calendar-table-container.week-view .calendar-table td:first-child {
+  min-width: 100px;
+  max-width: 120px;
+  width: 110px;
+  /* Réduit en semaine */
+}
+
+/* Les autres th/td (jours) */
+.calendar-table th:not(:first-child),
+.calendar-table td:not(:first-child) {
+  min-width: 45px;
+  max-width: 60px;
+  text-align: center;
+  padding: 6px 2px;
+}
+
+/* -- Body -- */
+.calendar-table tbody td {
+  background: #fff;
+  border-bottom: 1px solid #f6f6f6;
+  border-top: none;
+  height: 40px;
+  transition: background 0.15s;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+/* Coins arrondis sur la dernière ligne (mois ou semaine) */
+.calendar-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+.calendar-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+/* -- Avatar Team member -- */
+.avatar-sm {
+  width: 28px;
+  height: 28px;
+  background: #ececec;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 13px;
+}

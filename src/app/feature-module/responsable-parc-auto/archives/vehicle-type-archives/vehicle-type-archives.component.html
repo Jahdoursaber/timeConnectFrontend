@@ -1,0 +1,128 @@
+<div class="content">
+  <!-- Breadcrumb -->
+  <p-toast position="top-right"></p-toast>
+  <div class="d-md-flex d-block align-items-center justify-content-between mb-3">
+    <app-breadcrumbs title="Ancien Personnels" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+  </div>
+  <!-- /Breadcrumb -->
+
+
+  <!-- Leaves list -->
+  <div class="card">
+    <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+      <div class="d-flex">
+        <h5 class="me-2">Archive des véhicules</h5>
+      </div>
+      <div class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3">
+        <div class="dropdown me-3 ">
+          <ul class="dropdown-menu  dropdown-menu-end p-3">
+
+            <li>
+              <a href="javascript:void(0);"
+                class="dropdown-item rounded-1 d-flex justify-content-start align-items-center">
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="icons-list-item" tabindex="0">
+          <a href="javascript:void(0);" style="padding: 0.64rem ;"
+            class="btn btn-dark d-flex justify-content-center align-items-center me-2">
+            <i class="ti ti-refresh" title="réinisitaliser le filtrage"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div class="custom-datatable-filter ">
+        <div class="dataTables_wrapper dt-bootstrap5 no-footer">
+          <div class="row">
+            <div class="col-sm-12 col-md-6">
+              <div class="dataTables_length">
+                <label> Row Per Page
+                  <select [(ngModel)]="pageSize" (ngModelChange)="changePageSize(pageSize)"
+                    class="form-select form-select-sm">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                  Entries
+                </label>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+              <div id="DataTables_Table_0_filter" class="dataTables_filter">
+                <label>
+                  <input [(ngModel)]="searchDataValue" [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="searchData(searchDataValue)" type="search" class="form-control form-control-sm"
+                    placeholder="Search..." />
+                </label>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="loading" class="d-flex justify-content-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Chargement…</span>
+            </div>
+          </div>
+          <div class=" table-responsive">
+            <table matSort (matSortChange)="sortData($event)"
+              class="mat-sort table datanew table-center datatable dataTable  mb-0">
+              <thead class="thead-light">
+                <tr>
+
+                  <th mat-sort-header="Marque">Nom du marque</th>
+                  <th mat-sort-header="suppression">Date de suppression</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let type of tableData; trackBy: trackById">
+                  <td>{{type.type_name}}</td>
+                  <td>{{type.deleted_at}}</td>
+                  <td>
+                    <div class="action-icon d-inline-flex">
+                      <a href="javascript:void(0);" (click)="type.id && confirmRestore(type.id)" data-bs-toggle="modal"><i
+                          class="ti ti-restore"></i></a>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="!loading && tableData.length === 0">
+                  <td colspan="10">
+                    <h5 class="no-record">Aucun donnée trouvé</h5>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+          <app-custom-pagination></app-custom-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Edit Employee Leaves -->
+  <div class="modal fade" id="restore_modal_vehicle_type">
+    <div class="modal-dialog modal-dialog-modal-sm">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <span class="avatar avatar-xl bg-transparent-success text-success mb-3">
+            <i class="ti ti-refresh fs-36"></i> <!-- Icône restauration -->
+          </span>
+          <h4 class="mb-1">Confirmer la restauration</h4>
+          <p class="mb-3">Voulez-vous vraiment restaurer cette marque?.</p>
+          <div class="d-flex justify-content-center">
+            <a href="javascript:void(0);" class="btn btn-light me-3" data-bs-dismiss="modal">Annuler</a>
+            <a href="javascript:void(0);" class="btn btn-success" (click)="restoreSelectedVehicle()"
+              data-bs-dismiss="modal">Oui, Restaurer</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- /Edit Employee Leaves -->
+
+
+
+</div>

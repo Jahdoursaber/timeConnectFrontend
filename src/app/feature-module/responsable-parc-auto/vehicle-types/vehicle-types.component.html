@@ -1,0 +1,154 @@
+<div class="content">
+    <p-toast position="top-right"></p-toast>
+  <!-- Breadcrumb -->
+  <div class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3">
+    <app-breadcrumbs title="type" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+      <div class="d-flex my-xl-auto right-content align-items-center flex-wrap ">
+
+          <div class="mb-2">
+              <a href="javascript:void(0);" (click)="openAddModal()" data-bs-target="#add_type" class="btn btn-primary d-flex align-items-center"><i class="ti ti-circle-plus me-2"></i>Ajouter</a>
+          </div>
+          <app-collapse-header></app-collapse-header>
+      </div>
+  </div>
+  <!-- /Breadcrumb -->
+  <div *ngIf="formErrorMessage" class="alert alert-danger" role="alert" style="width:100%">
+  {{ formErrorMessage }}
+  </div>
+  <!-- Leads List -->
+  <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+          <h5>Listes des types véhicules</h5>
+          <div class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3">
+
+          </div>
+      </div>
+      <div class="card-body p-0">
+        <div class="custom-datatable-filter ">
+          <div class="dataTables_wrapper dt-bootstrap5 no-footer">
+            <div class="row">
+              <div class="col-sm-12 col-md-6">
+                <div class="dataTables_length">
+                  <label [htmlFor]=""> Row Per Page
+                    <select [(ngModel)]="pageSize" (ngModelChange)="changePageSize(pageSize)" class="form-select form-select-sm">
+                      <option value="10">10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                    Entries
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-6">
+                <div id="DataTables_Table_0_filter" class="dataTables_filter">
+                    <label [htmlFor]="">
+                        <input [(ngModel)]="searchDataValue" [ngModelOptions]="{ standalone: true }"
+                            (ngModelChange)="searchData(searchDataValue)" type="search" class="form-control form-control-sm"
+                            placeholder="Search..." />
+                    </label>
+                </div>
+            </div>
+            </div>
+              <div class=" table-responsive">
+                <table matSort (matSortChange)="sortData($event)" class="mat-sort table datanew table-center datatable dataTable  mb-0">
+                  <thead class="thead-light">
+                    <tr>
+                      <th mat-sort-header="Title">Marque</th>
+                      <th mat-sort-header="Created_Date">Date de création</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    <tr *ngFor="let type of tableData; trackBy: trackById">
+                      <td><p class="fs-14 text-dark fw-medium">{{type.type_name}}</p></td>
+                      <td>{{type.created_at | date:'dd-MM-yyyy HH:mm'}}</td>
+
+                      <td>
+                        <div class="action-icon d-inline-flex">
+                          <a href="javascript:void(0);" (click)="type.id && loadTypeById(type.id)" class="me-2" data-bs-toggle="modal" data-bs-target="#edit_type"><i class="ti ti-edit"></i></a>
+                          <a href="javascript:void(0);" data-bs-toggle="modal"  (click)="type.id && confirmDelete(type.id)"><i class="ti ti-trash"></i></a>
+                        </div>
+                      </td>
+                    </tr>
+
+
+                    <tr *ngIf="!loading && tableData.length === 0">
+                      <td colspan="10">
+                        <h5 class="no-record">Aucune donnée disponible</h5>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            <app-custom-pagination></app-custom-pagination>
+          </div>
+        </div>
+      </div>
+  </div>
+  <!-- /Leads List -->
+
+</div>
+  <!-- Add type -->
+  <div class="modal fade" id="add_type">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">
+            {{ isEditMode ? 'Modification' : 'Ajout' }}
+            </h4>
+          <button type="button" class="btn-close custom-btn-close" data-bs-dismiss="modal" aria-label="Close">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+        <form [formGroup]="myFormType" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
+          <div class="modal-body pb-0">
+            <div class="row">
+              <div class="col-md-12">
+
+                <div class="mb-3">
+                  <label for="validationCustom01" class="form-label">Type de véhicule</label>
+                  <input type="text" class="form-control" id="validationCustom01" formControlName="typeName"
+                  placeholder="Type de véhicule"
+                  [ngClass]="{'is-invalid': myFormType.get('typeName')?.invalid && myFormType.get('typeName')?.touched, 'is-valid': myFormType.get('typeName')?.valid}">
+                  <div *ngIf="myFormType.get('typeName')?.invalid && myFormType.get('typeName')?.touched" class="invalid-feedback">
+                    Ce champs est obligatoire.
+                  </div>
+                  <div *ngIf="myFormType.get('typeName')?.valid" class="valid-feedback">
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Annuler</button>
+            <button type="submit" class="btn btn-primary" [disabled]="myFormType.invalid">
+              {{ isEditMode ? 'Modifier' : 'Enregistrer' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- /Add type -->
+
+<!--delete type-->
+<div class="modal fade" id="delete_modal_type">
+  <div class="modal-dialog modal-dialog-modal-sm">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <span class="avatar avatar-xl bg-transparent-danger text-danger mb-3">
+          <i class="ti ti-trash-x fs-36"></i>
+        </span>
+        <h4 class="mb-1">Confirmation de suppression</h4>
+        <p class="mb-3">Voulez-vous vraiment supprimer ce type de véhicule ?</p>
+        <div class="d-flex justify-content-center">
+          <a href="javascript:void(0);" class="btn btn-light me-3" data-bs-dismiss="modal">Annuler</a>
+          <a href="javascript:void(0);" (click)="deleteSelectedType()" class="btn btn-danger" data-bs-dismiss="modal">Oui, Supprimer</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

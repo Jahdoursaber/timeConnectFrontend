@@ -1,0 +1,96 @@
+<div class="content">
+
+  <!-- Breadcrumb -->
+  <div class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3">
+    <app-breadcrumbs title="Activity" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+      <div class="d-flex my-xl-auto right-content align-items-center flex-wrap ">
+
+          <div class="mb-2">
+              <a href="javascript:void(0);" (click)="openAddModal()" data-bs-target="#add_activity" class="btn btn-primary d-flex align-items-center"><i class="ti ti-circle-plus me-2"></i>Ajouter</a>
+          </div>
+          <app-collapse-header></app-collapse-header>
+      </div>
+  </div>
+  <!-- /Breadcrumb -->
+
+  <!-- Leads List -->
+  <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+          <h5>Liste des codes apes</h5>
+          <div class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3">
+
+          </div>
+      </div>
+      <div class="card-body p-0">
+        <div class="custom-datatable-filter ">
+          <div class="dataTables_wrapper dt-bootstrap5 no-footer">
+            <div class="row">
+              <div class="col-sm-12 col-md-6">
+                <div class="dataTables_length">
+                  <label [htmlFor]=""> Row Per Page
+                    <select [(ngModel)]="pageSize" (ngModelChange)="changePageSize(pageSize)" class="form-select form-select-sm">
+                      <option value="10">10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                    Entries
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-6">
+                <div id="DataTables_Table_0_filter" class="dataTables_filter">
+                    <label [htmlFor]="">
+                        <input [(ngModel)]="searchDataValue" [ngModelOptions]="{ standalone: true }"
+                            (ngModelChange)="searchData(searchDataValue)" type="search" class="form-control form-control-sm"
+                            placeholder="Rechercher" />
+                    </label>
+                </div>
+            </div>
+            </div>
+              <div class=" table-responsive">
+                <table matSort (matSortChange)="sortData($event)" class="mat-sort table datanew table-center datatable dataTable  mb-0">
+                  <thead class="thead-light">
+                    <tr>
+                      <th mat-sort-header="Title">Code Ape</th>
+                      <th mat-sort-header="Created_Date">Titre</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (data of tableData; track data) {
+                    <tr>
+                      <td><p class="fs-14 text-dark fw-medium">{{data.code_ape}}</p></td>
+                      <td>{{data.label }}</td>
+
+                      <td>
+                        <div class="action-icon d-inline-flex">
+                          <a href="javascript:void(0);"  class="me-2" data-bs-toggle="modal" data-bs-target="#edit_activity"><i class="ti ti-edit"></i></a>
+                          <a href="javascript:void(0);" data-bs-toggle="modal"  ><i class="ti ti-trash"></i></a>
+                        </div>
+                      </td>
+                    </tr>
+                    }
+                    @if (tableData.length === 0) {
+                    <tr>
+                      <td colspan="10">
+                        <h5 class="no-record">No matching records found</h5>
+                      </td>
+                    </tr>
+                    }
+
+
+
+                  </tbody>
+                </table>
+              </div>
+            <app-custom-pagination></app-custom-pagination>
+          </div>
+        </div>
+      </div>
+  </div>
+  <!-- /Leads List -->
+
+</div>
+
+

@@ -1,0 +1,3 @@
+http://localhost:4200/refferals
+http://localhost:4200/candidates/candidates-grid
+http://localhost:4200/dashboard/employee

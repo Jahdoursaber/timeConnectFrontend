@@ -1,0 +1,454 @@
+<div class="content">
+  <p-toast position="top-right"></p-toast>
+  <!-- Breadcrumb -->
+  <div class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3">
+    <app-breadcrumbs title="Véhicules" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+    <div class="d-flex my-xl-auto right-content align-items-center flex-wrap ">
+
+      <div class="mb-2">
+        <a href="javascript:void(0);" (click)="openAddModal()" data-bs-target="#add_vehicle"
+          class="btn btn-primary d-flex align-items-center"><i class="ti ti-circle-plus me-2"></i>Ajouter</a>
+      </div>
+      <app-collapse-header></app-collapse-header>
+    </div>
+  </div>
+
+
+  <!-- Erreur -->
+  <div *ngIf="formErrorMessage" class="alert alert-danger" role="alert" style="width:100%">
+    {{ formErrorMessage }}
+  </div>
+  <!-- /Breadcrumb -->
+
+  <!-- Leads List -->
+  <div class="card">
+    <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+      <h5>Liste des véhicules</h5>
+      <div class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3">
+
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div class="custom-datatable-filter ">
+        <div class="dataTables_wrapper dt-bootstrap5 no-footer">
+          <div class="row">
+            <div class="col-sm-12 col-md-6">
+              <div class="dataTables_length">
+                <label [htmlFor]=""> Row Per Page
+                  <select [(ngModel)]="pageSize" (ngModelChange)="changePageSize(pageSize)"
+                    class="form-select form-select-sm">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                  Entries
+                </label>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+              <div id="DataTables_Table_0_filter" class="dataTables_filter">
+                <label [htmlFor]="">
+                  <input [(ngModel)]="searchDataValue" [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="searchData(searchDataValue)" type="search" class="form-control form-control-sm"
+                    placeholder="Rechercher" />
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class=" table-responsive">
+            <table matSort (matSortChange)="sortData($event)"
+              class="mat-sort table datanew table-center datatable dataTable  mb-0">
+              <thead class="thead-light">
+                <tr>
+                  <th mat-sort-header="Plaque d’immatriculation">Plaque d’immatriculation</th>
+                  <th mat-sort-header="Marque">Marque</th>
+                  <th mat-sort-header="Modèle">Modèle</th>
+                  <th mat-sort-header="Type de véhicule">Type de véhicule</th>
+                  <th mat-sort-header="Carburant">Carburant</th>
+                  <th mat-sort-header="Kilométrage">Kilométrage</th>
+                  <th mat-sort-header="Status">Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <tr *ngFor="let vehicle of tableData; trackBy: trackById">
+                  <td>
+                    <p class="fs-14 text-dark fw-medium">{{vehicle.plaque_immatriculation}}</p>
+                  </td>
+                  <td>{{ vehicle.brand_name }}</td>
+                  <td>{{ vehicle.model_name }}</td>
+                  <td>{{ vehicle.type_name }}</td>
+                  <td>{{ vehicle.fuel_type_name }}</td>
+                  <td>{{ vehicle.mileage }}</td>
+                  <td>
+                    <span class="badge d-inline-flex align-items-center badge-xs" [ngClass]="{
+                                  'badge-soft-success': vehicle.status === 0,
+                                  'badge-soft-warning': vehicle.status === 1,
+                                  'badge-soft-info': vehicle.status === 2,
+                                  'badge-soft-danger': vehicle.status ===  3
+                                }">
+                      <i class="ti ti-point-filled me-1"></i>
+                      {{ vehicle.status_label }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="action-icon d-inline-flex">
+                      <a href="javascript:void(0);" (click)="vehicle.id && loadVehicleById(vehicle.id)" class="me-2"
+                        data-bs-toggle="modal" data-bs-target="#edit_model"><i class="ti ti-edit"></i></a>
+                      <a href="javascript:void(0);" data-bs-toggle="modal"
+                        (click)="vehicle.id && confirmDelete(vehicle.id)"><i class="ti ti-trash"></i></a>
+                       <a *ngIf="vehicle.status === 0" href="javascript:void(0);" [title]="'Affecter le véhicule'"  (click)="vehicle.id && confirmAssignTechnician(vehicle.id)"><i class="ti ti-car"></i><i class="ti ti-plus"></i></a>
+                       <a *ngIf="vehicle.status === 3" href="javascript:void(0);" [title]="'Restituer le véhicule'"  (click)="vehicle.id && showAssignmentInfo(vehicle.id)"><i class="ti ti-car"></i><i class="ti ti-minus"></i></a>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="!loading && tableData.length === 0">
+                  <td colspan="10">
+                    <h5 class="no-record">Aucune donnée disponible</h5>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <app-custom-pagination></app-custom-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /Leads List -->
+
+</div>
+<!-- Add vehicle -->
+<div class="modal fade" id="add_vehicle">
+  <div class="modal-dialog modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="d-flex align-items-center">
+          <h4 class="modal-title me-2">{{ isEditMode ? 'Modification' : 'Ajout' }}</h4>
+        </div>
+        <button type="button" class="btn-close custom-btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+      <form [formGroup]="MyVehicleForm" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
+        <div class="tab-pane fade show active" id="basic-info" role="tabpanel" aria-labelledby="info-tab" tabindex="0">
+          <div class="modal-body pb-0 ">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <label for="validationCustom08" class="form-label">Type de véhicule</label>
+                  <mat-select formControlName="vehicle_type_id" placeholder="-- Sélectionner --"
+                    [ngClass]="{'is-invalid': MyVehicleForm.get('vehicle_type_id')?.invalid && MyVehicleForm.get('vehicle_type_id')?.touched}">
+                    <mat-option *ngIf="vehicle_types.length === 0" disabled>
+                      Aucune marque disponible
+                    </mat-option>
+                    <mat-option *ngFor="let type of vehicle_types" [value]="type.id">{{ type.type_name }}</mat-option>
+                  </mat-select>
+                  <div
+                    *ngIf="MyVehicleForm.get('vehicle_type_id')?.invalid && MyVehicleForm.get('vehicle_type_id')?.touched"
+                    class="invalid-feedback">
+                    Ce champ est obligatoire.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <label class="form-label" for="validationCustom09">Marque</label>
+                  <mat-select formControlName="brand_id" placeholder="-- Sélectionner --"
+                    [ngClass]="{'is-invalid': MyVehicleForm.get('brand_id')?.invalid && MyVehicleForm.get('brand_id')?.touched}">
+                    <mat-option *ngIf="vehicle_brands.length === 0" disabled>
+                      Aucune marque disponible
+                    </mat-option>
+                    <mat-option *ngFor="let brand of vehicle_brands" [value]="brand.id">
+                      {{ brand.brand_name }}
+                    </mat-option>
+                  </mat-select>
+                  <div *ngIf="MyVehicleForm.get('brand_id')?.invalid && MyVehicleForm.get('brand_id')?.touched"
+                    class="invalid-feedback">
+                    Ce champ est obligatoire.
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <label for="validationCustom10" class="form-label">Modèle</label>
+                  <mat-select formControlName="model_id" placeholder="-- Sélectionner --"
+                    [disabled]="vehicle_models.length === 0"
+                    [ngClass]="{'is-invalid': MyVehicleForm.get('model_id')?.invalid && MyVehicleForm.get('model_id')?.touched}">
+                    <mat-option *ngIf="vehicle_models.length === 0" disabled>
+                      Aucun modèle disponible
+                    </mat-option>
+                    <mat-option *ngFor="let model of vehicle_models" [value]="model.id">
+                      {{ model.model_name }}
+                    </mat-option>
+                  </mat-select>
+                  <div *ngIf="MyVehicleForm.get('model_id')?.invalid && MyVehicleForm.get('model_id')?.touched"
+                    class="invalid-feedback">
+                    Ce champ est obligatoire.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <label for="validationCustom06" class="form-label">Plaque d’immatriculation</label>
+                  <input type="text" class="form-control" id="validationCustom06"
+                    formControlName="plaque_immatriculation" placeholder="Plaque d’immatriculation"
+                    [ngClass]="{'is-invalid': MyVehicleForm.get('plaque_immatriculation')?.invalid && MyVehicleForm.get('plaque_immatriculation')?.touched, 'is-valid': MyVehicleForm.get('plaque_immatriculation')?.valid}">
+                  <div
+                    *ngIf="MyVehicleForm.get('plaque_immatriculation')?.invalid && MyVehicleForm.get('plaque_immatriculation')?.touched"
+                    class="invalid-feedback">
+                    Ce champ est obligatoire.
+                  </div>
+                  <div *ngIf="MyVehicleForm.get('plaque_immatriculation')?.valid" class="valid-feedback">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="mb-3 ngx-date2">
+                  <label for="validationCustom09" class="form-label">Date d’immatriculation</label>
+                  <div class="input-icon-end position-relative">
+                    <input type="date" class="form-control datetimepicker" id="validationCustom09"
+                      formControlName="date_immatriculation"
+                      [ngClass]="{'is-invalid': MyVehicleForm.get('date_immatriculation')?.invalid && MyVehicleForm.get('date_immatriculation')?.touched,
+                        'is-valid': MyVehicleForm.get('date_immatriculation')?.valid && MyVehicleForm.get('date_immatriculation')?.touched}" />
+                    <div
+                      *ngIf="MyVehicleForm.get('date_immatriculation')?.invalid && MyVehicleForm.get('date_immatriculation')?.touched"
+                      class="invalid-feedback">
+                      Ce champ est obligatoire.
+                    </div>
+                    <div *ngIf="MyVehicleForm.get('date_immatriculation')?.valid" class="valid-feedback">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="mb-3 ngx-date2">
+                  <label for="validationCustom09" class="form-label">Date d'achat</label>
+                  <div class="input-icon-end position-relative">
+                    <input type="date" class="form-control datetimepicker" id="validationCustom09"
+                      formControlName="date_achat"
+                      [ngClass]="{'is-invalid': MyVehicleForm.get('date_achat')?.invalid && MyVehicleForm.get('date_achat')?.touched,
+                        'is-valid': MyVehicleForm.get('date_achat')?.valid && MyVehicleForm.get('date_achat')?.touched}" />
+                    <div *ngIf="MyVehicleForm.get('date_achat')?.invalid && MyVehicleForm.get('date_achat')?.touched"
+                      class="invalid-feedback">
+                      Ce champ est obligatoire.
+                    </div>
+                    <div *ngIf="MyVehicleForm.get('date_achat')?.valid" class="valid-feedback">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <label for="validationCustom06" class="form-label">KM</label>
+                  <input type="number" class="form-control" id="validationCustom06" formControlName="mileage"
+                    placeholder="KM"
+                    [ngClass]="{'is-invalid': MyVehicleForm.get('mileage')?.invalid && MyVehicleForm.get('mileage')?.touched, 'is-valid': MyVehicleForm.get('mileage')?.valid}">
+                  <div *ngIf="MyVehicleForm.get('mileage')?.invalid && MyVehicleForm.get('mileage')?.touched"
+                    class="invalid-feedback">
+                    Ce champ est obligatoire.
+                  </div>
+                  <div *ngIf="MyVehicleForm.get('mileage')?.valid" class="valid-feedback">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <label class="form-label" for="validationCustom11">Type Carburant</label>
+                  <mat-select formControlName="vehicle_fuel_type_id" placeholder="-- Sélectionner --"
+                    [ngClass]="{'is-invalid': MyVehicleForm.get('vehicle_fuel_type_id')?.invalid && MyVehicleForm.get('vehicle_fuel_type_id')?.touched}">
+                    <mat-option *ngIf="fuel_types.length === 0" disabled>
+                      Aucun type carburant disponible
+                    </mat-option>
+                    <mat-option *ngFor="let f of fuel_types" [value]="f.id">
+                      {{ f.fuel_type_name }}
+                    </mat-option>
+                  </mat-select>
+                  <div
+                    *ngIf="MyVehicleForm.get('vehicle_fuel_type_id')?.invalid && MyVehicleForm.get('vehicle_fuel_type_id')?.touched"
+                    class="invalid-feedback">
+                    Ce champ est obligatoire.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <label class="form-label" for="validationCustom09">Boîte Vitesse</label>
+                  <div>
+                    <input type="radio" id="manual" formControlName="gearbox" value="manual" class="form-check-input">
+                    <label for="manual" class="form-check-label">Manuelle</label>
+                    <input type="radio" id="auto" formControlName="gearbox" value="automatic"
+                      class="form-check-input ms-3">
+                    <label for="auto" class="form-check-label">Automatique</label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <label for="validationCustom12" class="form-label">Carte grise</label>
+                  <input type="file" class="form-control" accept=".jpeg, .jpg, .png, .pdf"
+                    (change)="onFileChange($event, 'gray_card')"
+                    [ngClass]="{'is-invalid': fileErrors['gray_card'] !== ''}">
+                  <div *ngIf="fileErrors['gray_card'] !== ''" class="invalid-feedback">
+                    {{ fileErrors['gray_card'] }}
+                  </div>
+                  <div *ngIf="isEditMode" class="mt-2">
+                    <div *ngIf="currentGrayCardsUrl; else noGrayCard">
+                      <a [href]="currentGrayCardsUrl" target="_blank" download="carte_grise" style="cursor: pointer;">
+                        <img [src]="currentGrayCardsUrl" alt="Carte grise" class="img-thumbnail"
+                          style="max-height: 100px;">
+                      </a>
+                    </div>
+                    <ng-template #noGrayCard>
+                      <div class="alert alert-info">
+                        Aucune carte grise n'a été téléchargé
+                      </div>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <label for="validationCustom14" class="form-label">Carte verte</label>
+                  <input type="file" class="form-control" accept=".jpeg, .jpg, .png, .pdf"
+                    (change)="onFileChange($event, 'green_card')"
+                    [ngClass]="{'is-invalid': fileErrors['green_card'] !== ''}">
+                  <div *ngIf="fileErrors['green_card'] !== ''" class="invalid-feedback">
+                    {{ fileErrors['green_card'] }}
+                  </div>
+
+                  <div *ngIf="isEditMode" class="mt-2">
+                    <div *ngIf="currentGreenCardUrl; else noGreenCard">
+                      <a [href]="currentGreenCardUrl" target="_blank" download="carte_verte" style="cursor: pointer;">
+                        <img [src]="currentGreenCardUrl" alt="Carte verte" class="img-thumbnail"
+                          style="max-height: 100px;">
+                      </a>
+                    </div>
+                    <ng-template #noGreenCard>
+                      <div class="alert alert-info">
+                        Aucune carte verte n'a été téléchargée
+                      </div>
+                    </ng-template>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div *ngIf="formErrorMessage" class="alert alert-danger w-100 mb-3">
+              {{ formErrorMessage }}
+            </div>
+            <button type="button" class="btn btn-outline-light border me-2" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" [disabled]="MyVehicleForm.invalid">
+              {{ isEditMode ? 'Modifier' : 'Enregistrer' }}
+
+            </button>
+          </div>
+        </div>
+
+
+      </form>
+    </div>
+  </div>
+</div>
+<!-- /Add vehicle -->
+
+<!--delete model-->
+<div class="modal fade" id="delete_modal_vehicle">
+  <div class="modal-dialog modal-dialog-modal-sm">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <span class="avatar avatar-xl bg-transparent-danger text-danger mb-3">
+          <i class="ti ti-trash-x fs-36"></i>
+        </span>
+        <h4 class="mb-1">Confirmation de Suppression</h4>
+        <p class="mb-3">Êtes-vous sûr de vouloir supprimer ce modèle?</p>
+        <div class="d-flex justify-content-center">
+          <a href="javascript:void(0);" class="btn btn-light me-3" data-bs-dismiss="modal">Annuler</a>
+          <a href="javascript:void(0);" (click)="deleteSelectedVehicle()" class="btn btn-danger"
+            data-bs-dismiss="modal">Oui, Supprimer</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="assign_vehicle_modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">
+            Affectation véhicule
+            </h4>
+          <button type="button" class="btn-close custom-btn-close" data-bs-dismiss="modal" aria-label="Close">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+        <form [formGroup]="MyassignForm" (ngSubmit)="onAssignSubmit()" class="needs-validation" novalidate>
+          <div class="modal-body pb-0">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <label for="validationCustom02" class="form-label">Liste des techniciens</label>
+                  <mat-select  id="validationCustom02" class="select custom-mat-select" placeholder="-- Sélectionner --" formControlName="technicien_id">
+                    <mat-option *ngIf="technicians.length === 0" disabled>
+                      Aucun technicien disponible
+                    </mat-option>
+                    <mat-option *ngFor="let technician of technicians" [value]="technician.id">
+                      {{ technician.first_name }} {{ technician.last_name }}
+                    </mat-option>
+                  </mat-select>
+                </div>
+                <div class="mb-3">
+                  <label for="validationCustom01" class="form-label">Date d'affectation</label>
+                  <input type="datetime-local" class="form-control" id="validationCustom01" formControlName="date_affectation"
+                  [ngClass]="{'is-invalid': MyassignForm.get('date_affectation')?.invalid && MyassignForm.get('date_affectation')?.touched, 'is-valid': MyassignForm.get('date_affectation')?.valid}">
+                  <div *ngIf="MyassignForm.get('date_affectation')?.invalid && MyassignForm.get('date_affectation')?.touched" class="invalid-feedback">
+                    Ce champ est obligatoire
+                  </div>
+                  <div *ngIf="MyassignForm.get('date_affectation')?.valid" class="valid-feedback">
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Annuler</button>
+            <button type="submit" class="btn btn-primary"  [disabled]="MyassignForm.invalid">
+             Affecter
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+<div class="modal fade" id="show_assignment_info_modal">
+  <div class="modal-dialog modal-dialog-modal-sm">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+
+        <h4 class="mb-1">Restitution du véhicule</h4>
+        <p class="mb-3">
+          L'employé
+          <span class="fw-bold text-primary">
+            {{ assignmentInfo?.technicien_name || 'N/A' }}
+          </span>
+          souhaite rendre son véhicule
+          <span class="fw-bold text-success">
+            {{ assignmentInfo?.plaque_immatriculation || 'N/A' }}
+          </span>
+        </p>
+        <div class="d-flex justify-content-center">
+          <a href="javascript:void(0);" class="btn btn-light me-3" data-bs-dismiss="modal">Annuler</a>
+          <a href="javascript:void(0);" (click)="onRestituerVehicule()" class="btn btn-danger"
+            data-bs-dismiss="modal">Accepter</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

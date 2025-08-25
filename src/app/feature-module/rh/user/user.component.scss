@@ -1,0 +1,59 @@
+::ng-deep .iti {
+  position: relative;
+  display: block;
+  width: 100% !important;
+}
+
+::ng-deep .iti__flag-container {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+::ng-deep .iti input {
+  padding-left: 58px !important;
+  height: 38px !important;
+  font-size: 14px;
+  border-radius: 6px;
+  width: 100%;
+}
+
+::ng-deep .iti__selected-flag {
+  height: 100%;
+  background-color: transparent;
+  border: none;
+}
+
+::ng-deep .iti__country-list {
+  z-index: 99999 !important;
+  max-height: 300px;
+  overflow-y: auto;
+}
+::ng-deep .is-invalid .iti__tel-input {
+  border-color: #dc3545 !important;
+  padding-right: 2rem;
+}
+
+::ng-deep .is-valid .iti__tel-input {
+  border-color: #28a745 !important;
+  padding-right: 2rem;
+}
+
+.validation-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  pointer-events: none;
+}
+
+.invalid-icon {
+  color: #dc3545;
+}
+
+.valid-icon {
+  color: #28a745;
+}

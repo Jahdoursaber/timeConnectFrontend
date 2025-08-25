@@ -1,0 +1,18 @@
+/* Réduit la largeur et la padding globale du menu */
+.dropdown-menu {
+  min-width: 150px !important;   /* largeur plus petite */
+  padding: 0.4rem 0 !important; /* moins d'espace vertical */
+  font-size: 0.92rem;            /* texte un peu plus petit */
+}
+
+/* Réduit la hauteur de chaque item */
+.dropdown-item {
+  padding: 0.5rem 1.1rem !important; /* moins d'espace haut/bas/gauche/droite */
+  font-size: 0.93rem !important;      /* texte plus petit */
+  line-height: 1.25 !important;       /* plus compact */
+}
+
+/* Optionnel : réduit aussi les icônes si besoin */
+.dropdown-item i {
+  font-size: 1rem !important;
+}

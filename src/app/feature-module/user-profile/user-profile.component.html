@@ -1,0 +1,181 @@
+<div class="page-wrapper">
+	<div class="content">
+
+		<!-- Breadcrumb -->
+		<div class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3">
+			<app-breadcrumbs title="Profile" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+			<app-collapse-header></app-collapse-header>
+		</div>
+		<!-- /Breadcrumb -->
+
+		<div class="card" >
+			<div class="card-body">
+				<div class="border-bottom mb-3 pb-3">
+					<h4>Profile </h4>
+				</div>
+				<form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+					<div class="border-bottom mb-3">
+						<div class="row">
+							<div class="col-md-12">
+								<div>
+									<h6 class="mb-3">Information Personnels</h6>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="row align-items-center mb-3">
+									<div class="col-md-4">
+										<label [htmlFor]="" class="form-label mb-md-0">Prénom</label>
+									</div>
+									<div class="col-md-8">
+										<input type="text" class="form-control" formControlName="first_name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="row align-items-center mb-3">
+									<div class="col-md-4">
+										<label [htmlFor]="" class="form-label mb-md-0">Nom</label>
+									</div>
+									<div class="col-md-8">
+										<input type="text" class="form-control"  formControlName="last_name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="row align-items-center mb-3">
+									<div class="col-md-4">
+										<label [htmlFor]="" class="form-label mb-md-0">Email</label>
+									</div>
+									<div class="col-md-8">
+										<input type="email" class="form-control" formControlName="email">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="row align-items-center mb-3">
+									<div class="col-md-4">
+										<label [htmlFor]="" class="form-label mb-md-0">Téléphone</label>
+									</div>
+									<div class="col-md-8">
+										<input type="text" class="form-control" formControlName="phone">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="border-bottom mb-3">
+						<h6 class="mb-3">Address Information</h6>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="row align-items-center mb-3">
+									<div class="col-md-2">
+										<label [htmlFor]="" class="form-label mb-md-0">Addresse</label>
+									</div>
+									<div class="col-md-10">
+										<input type="text" class="form-control" formControlName="address">
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-6">
+								<div class="row align-items-center mb-3">
+									<div class="col-md-4">
+										<label [htmlFor]="" class="form-label mb-md-0">Postal Code</label>
+									</div>
+									<div class="col-md-8">
+										<input type="text" class="form-control" formControlName="postal_address">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="border-bottom mb-3">
+						<h6 class="mb-3">Change Password</h6>
+						<div class="row">
+							<div class="col-md-4">
+								<div class="row align-items-center mb-3">
+									<div class="col-md-5">
+										<label [htmlFor]="" class="form-label mb-md-0">Mot de passe actuel</label>
+									</div>
+									<div class="col-md-7">
+										<div class="pass-group">
+                      <input
+                        [type]="password[0] ? 'text' : 'password'"
+                          class="pass-input form-control"
+                          tabindex="0"
+                          placeholder="Password"
+                        />
+                        <span
+                          class="ti toggle-password"
+                          [ngClass]="password[0] ? 'ti-eye' : 'ti-eye-off'"
+                          (click)="togglePassword(0)"
+                          (keydown.enter)="togglePassword(0)"
+                          tabindex="0"
+                        ></span>
+
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="row align-items-center mb-3">
+									<div class="col-md-5">
+										<label [htmlFor]="" class="form-label mb-md-0">Nouveau mot de passe</label>
+									</div>
+									<div class="col-md-7">
+										<div class="pass-group">
+											<input
+                        [type]="password[1] ? 'text' : 'password'"
+                          class="pass-input form-control"
+                          tabindex="0"
+                          placeholder="Password"
+                        />
+                        <span
+                          class="ti toggle-password"
+                          [ngClass]="password[1] ? 'ti-eye' : 'ti-eye-off'"
+                          (click)="togglePassword(1)"
+                          (keydown.enter)="togglePassword(1)"
+                          tabindex="0"
+                        ></span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="row align-items-center mb-3">
+									<div class="col-md-5">
+										<label [htmlFor]="" class="form-label mb-md-0">Confirmation de motde passe</label>
+									</div>
+									<div class="col-md-7">
+										<div class="pass-group">
+											<input
+                        [type]="password[2] ? 'text' : 'password'"
+                          class="pass-input form-control"
+                          tabindex="0"
+                          placeholder="Password"
+                        />
+                        <span
+                          class="ti toggle-password"
+                          [ngClass]="password[2] ? 'ti-eye' : 'ti-eye-off'"
+                          (click)="togglePassword(2)"
+                          (keydown.enter)="togglePassword(2)"
+                          tabindex="0"
+                        ></span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-end">
+						<button type="button" class="btn btn-outline-light border me-3">Cancel</button>
+						<button type="submit" class="btn btn-primary">Enregistrer</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<app-footer></app-footer>
+</div>

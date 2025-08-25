@@ -1,0 +1,485 @@
+<div class="content">
+  <!-- Breadcrumb -->
+  <div
+    class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3"
+  >
+    <div class="my-auto mb-2">
+      
+    </div>
+    <div class="d-flex my-xl-auto right-content align-items-center flex-wrap">
+      <div class="mb-2">
+        <a
+          href="javascript:void(0);"
+          data-bs-toggle="modal"
+          data-bs-target="#add_bank_satutory"
+          class="btn btn-primary d-flex align-items-center"
+          ><i class="ti ti-circle-plus me-2"></i>Bank & Statutory</a
+        >
+      </div>
+      <app-collapse-header></app-collapse-header>
+    </div>
+  </div>
+  <!-- /Breadcrumb -->
+
+  <div class="row">
+    <div class="col-xl-4 theiaStickySidebar">
+      <div class="card card-bg-1">
+        <div class="card-body p-0">
+          <span
+            class="avatar avatar-xl avatar-rounded border border-2 border-white m-auto d-flex mb-2"
+          >
+          </span>
+          <div class="text-center px-3 pb-3 border-bottom">
+            <div class="mb-3">
+              <h5 class="d-flex align-items-center justify-content-center mb-1">
+                {{ user.first_name }} {{ user.last_name}}
+                <i class="ti ti-discount-check-filled text-success ms-1"></i>
+              </h5>
+              <span class="badge badge-soft-dark fw-medium me-2">
+                <i class="ti ti-point-filled me-1"></i>{{ user.job_title }}
+              </span>
+            </div>
+            <div>
+              <div
+                class="d-flex align-items-center justify-content-between mb-2"
+              >
+                <span class="d-inline-flex align-items-center">
+                  <i class="ti ti-id me-2"></i>
+                  Matricule
+                </span>
+                <p class="text-dark">{{ user.matricule }}</p>
+              </div>
+              <div
+                class="d-flex align-items-center justify-content-between mb-2"
+              >
+                <span class="d-inline-flex align-items-center">
+                  <i class="ti ti-star me-2"></i>
+                  Nom de l'activité
+                </span>
+                <p class="text-dark">{{ user.activity_name }}</p>
+              </div>
+              <div
+                class="d-flex align-items-center justify-content-between mb-2"
+              >
+                <span class="d-inline-flex align-items-center">
+                  <i class="ti ti-calendar-check me-2"></i>
+                  Date d'entrée
+                </span>
+                <p class="text-dark">{{ formatDateFR(user.entry_date) }}</p>
+              </div>
+              <div class="d-flex align-items-center justify-content-between">
+                <span class="d-inline-flex align-items-center">
+                  <i class="ti ti-user-check me-2"></i>
+                  Superviseur
+                </span>
+                <div class="d-flex align-items-center">
+                  <p class="text-gray-9 mb-0">{{ user.supervisor_name }}</p>
+                </div>
+              </div>
+              <div class="row gx-2 mt-3">
+                <div class="col-12">
+                  <div>
+                    <a
+                      href="javascript:void(0);"
+                      class="btn btn-dark w-100"
+                      data-bs-toggle="modal"
+                      data-bs-target="#edit_employee"
+                      ><i class="ti ti-edit me-1"></i>Edit Info</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="p-3 border-bottom">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <h6>Information Personnelle</h6>
+              <a
+                href="javascript:void(0);"
+                class="btn btn-icon btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#edit_employee"
+                ><i class="ti ti-edit"></i
+              ></a>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="d-inline-flex align-items-center">
+                <i class="ti ti-phone me-2"></i>
+                Téléphone
+              </span>
+              <p class="text-dark">{{ user.phone }}</p>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="d-inline-flex align-items-center">
+                <i class="ti ti-mail-check me-2"></i>
+                Email
+              </span>
+              <a
+                href="javascript:void(0);"
+                class="text-info d-inline-flex align-items-center"
+                >{{ user.email }}<i class="ti ti-copy text-dark ms-2"></i
+              ></a>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="d-inline-flex align-items-center">
+                <i class="ti ti-map-pin-check me-2"></i>
+                Addresse
+              </span>
+              <p class="text-dark text-end">{{ user.address }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="card mb-4" *ngIf="leaveBalance">
+          <div class="card-body text-center">
+            <div class="d-flex align-items-center gap-2 mb-4">
+              <i class="far fa-calendar-alt text-primary"></i>
+              <h3>Solde des Congés</h3>
+            </div>
+            <div class="fw-bold display-5 my-2">
+              {{ leaveBalance.LeaveLeft }}
+            </div>
+            <div class="text-muted mb-2">jours restants</div>
+            <div class="progress" style="height: 8px">
+              <div
+                class="progress-bar bg-dark"
+                [style.width.%]="
+                  leaveBalance.TotalLeave
+                    ? (100 * leaveBalance.LeaveTaken) / leaveBalance.TotalLeave
+                    : 0
+                "
+                role="progressbar"
+              ></div>
+            </div>
+            <div
+              class="d-flex justify-content-between mt-2 text-muted"
+              style="font-size: 1em"
+            >
+              <span>Utilisés: {{ leaveBalance.LeaveTaken }}j</span>
+              <span>Total: {{ leaveBalance.TotalLeave }}j</span>
+            </div>
+            <div class="row mt-3">
+              <div class="col-6">
+                <div class="bg-info-transparent text-primary p-2 rounded">
+                  <div class="fw-bold">{{ leaveBalance.LeaveTaken }}</div>
+                  <div class="small">Pris</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="bg-success-transparent text-success p-2 rounded">
+                  <div class="fw-bold">{{ leaveBalance.LeaveLeft }}</div>
+                  <div class="small">Restants</div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-2 text-muted small">
+              Période de référence: du
+              {{ leaveBalance.ReferencePeriod.start | date : "dd MMM yyyy" }} au
+              {{ leaveBalance.ReferencePeriod.end | date : "dd MMM yyyy" }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-8">
+      <div>
+        <div class="tab-content custom-accordion-items">
+          <div
+            class="tab-pane active show"
+            id="bottom-justified-tab1"
+            role="tabpanel"
+          >
+            <div
+              class="accordion accordions-items-seperate"
+              id="accordionExample"
+            >
+              <div class="row">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="contact-grids-tab p-0 mb-3">
+                      <ul class="nav nav-underline" id="myTab" role="tablist" >
+                        <li class="nav-item" role="presentation">
+                          <button
+                            class="nav-link active"
+                            id="address-tab6"
+                            data-bs-toggle="tab"
+                            data-bs-target="#address6"
+                            type="button"
+                            role="tab"
+                            aria-selected="false"
+                          >
+                            Historique de congés
+                          </button>
+                        </li>
+                        <li class="nav-item" role="presentation" *ngIf="userRole === 'RH'">
+                          <button
+                            class="nav-link"
+                            id="address-tab7"
+                            data-bs-toggle="tab"
+                            data-bs-target="#address7"
+                            type="button"
+                            role="tab"
+                            aria-selected="false"
+                          >
+                            Historique demande d'acomptes
+                          </button>
+                        </li>
+                        <li class="nav-item" role="presentation" *ngIf="userRole === 'RH'">
+                          <button
+                            class="nav-link"
+                            id="address-tab8"
+                            data-bs-toggle="tab"
+                            data-bs-target="#address8"
+                            type="button"
+                            role="tab"
+                            aria-selected="false"
+                          >
+                            Historique d'autres demandes
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="tab-content" id="myTabContent6">
+
+                      <div
+                        class="tab-pane fade show active"
+                        id="address6"
+                        role="tabpanel"
+                        aria-labelledby="address-tab6"
+                        tabindex="0"
+                      >
+                        <div class="leave-history-scroll" *ngIf="(leaves$ | async) as leaves">
+                          <div class="row" *ngIf="leaves.length > 0; else noLeaves">
+                            <div
+                              class="col-md-12 d-flex"
+                              *ngFor="let leave of leaves"
+                            >
+                              <div class="card flex-fill">
+                                <div class="card-body">
+                                  <div class="row align-items-center">
+                                    <div
+                                      class="d-flex align-items-center justify-content-between"
+                                    >
+                                      <div
+                                        class="d-flex align-items-center gap-2"
+                                      >
+                                        <span
+                                          class="me-2"
+                                          [style.color]="leave.color"
+                                        >
+                                          <i class="fas fa-circle"></i>
+                                        </span>
+                                        <span class="fw-bold">{{
+                                          leave.leave_type
+                                        }}</span>
+                                        <span
+                                          *ngIf="leave.status"
+                                          class="badge ms-2"
+                                          [ngClass]="{
+                                            'bg-success':
+                                              leave.status === 'Approuvé' ||
+                                              leave.status === 'Accepté',
+                                            'bg-warning':
+                                              leave.status === 'En attente',
+                                            'bg-danger':
+                                              leave.status === 'Refusé'
+                                          }"
+                                          style="font-size: 0.9em"
+                                        >
+                                          {{ leave.status }}
+                                        </span>
+                                      </div>
+                                      <div
+                                        class="text-muted text-end"
+                                        style="font-size: 1em; min-width: 60px"
+                                      >
+                                        {{ leave.nb_of_days }} jour{{
+                                          leave.nb_of_days > 1 ? "s" : ""
+                                        }}
+                                      </div>
+                                    </div>
+
+                                    <div
+                                      class="mt-2 mb-2 d-flex align-items-center text-muted"
+                                      style="font-size: 0.98em"
+                                    >
+                                      <i class="far fa-calendar-alt me-2"></i>
+                                      Du {{ formatDateFR(leave.start) }} au
+                                      {{ formatDateFR(leave.end) }}
+                                    </div>
+                                    <div class="mb-1">
+                                      <span class="fw-bold">Motif&nbsp;:</span>
+                                      <span
+                                        class="badge bg-light border px-2 text-dark"
+                                        *ngIf="leave.message"
+                                        >{{ leave.message }}</span
+                                      >
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <ng-template #noLeaves>
+                          <p class="text-muted ms-3">Aucune demande de congé trouvée.</p>
+                        </ng-template>
+                      </div>
+                      <div
+                        class="tab-pane fade"
+                        id="address7"
+                        role="tabpanel"
+                        aria-labelledby="address-tab7"
+                        tabindex="0" *ngIf="userRole === 'RH'"
+                      >
+                        <div class="leave-history-scroll" *ngIf="(advances$ | async) as advances">
+                          <div class="row"*ngIf="advances.length > 0; else noAdvances" >
+                            <div
+                              class="col-md-12 d-flex"
+                              *ngFor="let advance of advances$ | async"
+                            >
+                              <div class="card flex-fill">
+                                <div class="card-body">
+                                  <div class="row align-items-center">
+                                    <div
+                                      class="d-flex align-items-center justify-content-between"
+                                    >
+                                      <div
+                                        class="d-flex align-items-center gap-2"
+                                      >
+
+                                        <span class="fw-bold">{{
+                                          advance.amount
+                                        }}</span>
+                                        <span
+                                          *ngIf="advance.status"
+                                          class="badge ms-2"
+                                          [ngClass]="{
+                                            'bg-success':
+                                              advance.status === 'accepted',
+                                            'bg-warning':
+                                              advance.status === 'pending',
+                                            'bg-danger':
+                                              advance.status === 'rejected'
+                                          }"
+                                          style="font-size: 0.9em"
+                                        >
+                                          {{ advance.status }}
+                                        </span>
+                                      </div>
+                                      <div
+                                        class="text-muted text-end"
+                                        style="font-size: 1em; min-width: 60px"
+                                      >
+                                        {{ advance.amount }}
+                                      </div>
+                                    </div>
+
+                                    <div
+                                      class="mt-2 mb-2 d-flex align-items-center text-muted"
+                                      style="font-size: 0.98em"
+                                    >
+                                      <i class="far fa-calendar-alt me-2"></i>
+                                      {{ formatDateFR(advance.created_at) }}
+                                    </div>
+                                    <div class="mb-1">
+                                      <span class="fw-bold">Motif&nbsp;:</span>
+                                      <span
+                                        class="badge bg-light border px-2 text-dark"
+                                        *ngIf="advance.message"
+                                        >{{ advance.message }}</span
+                                      >
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <ng-template #noAdvances>
+                            <p class="text-muted ms-3">Aucune demande d'acompte trouvée.</p>
+                          </ng-template>
+                        </div>
+                      </div>
+                      <div
+                        class="tab-pane fade"
+                        id="address8"
+                        role="tabpanel"
+                        aria-labelledby="address-tab8"
+                        tabindex="0" *ngIf="userRole === 'RH'"
+                      >
+                        <div class="leave-history-scroll" *ngIf="(otherRequest$ | async) as others">
+                          <div class="row" *ngIf="others.length > 0; else noOthers">
+                            <div
+                              class="col-md-12 d-flex"
+                              *ngFor="let other of otherRequest$ | async"
+                            >
+                              <div class="card flex-fill">
+                                <div class="card-body">
+                                  <div class="row align-items-center">
+                                    <div
+                                      class="d-flex align-items-center justify-content-between"
+                                    >
+                                      <div
+                                        class="d-flex align-items-center gap-2"
+                                      >
+                                        <span class="fw-bold">{{
+                                          other.message
+                                        }}</span>
+                                        <span
+                                          *ngIf="other.is_replied !== null"
+                                          class="badge ms-2"
+                                          [ngClass]="{
+                                            'bg-success': other.is_replied,
+                                            'bg-warning': !other.is_replied
+                                          }"
+                                          style="font-size: 0.9em"
+                                        >
+                                          {{ other.is_replied ? 'Répondu' : 'Non répondu' }}
+                                        </span>
+
+                                      </div>
+                                      <div
+                                        class="text-muted text-end"
+                                        style="font-size: 1em; min-width: 60px"
+                                      >
+
+                                      </div>
+                                    </div>
+
+                                    <div
+                                      class="mt-2 mb-2 d-flex align-items-center text-muted"
+                                      style="font-size: 0.98em"
+                                    >
+                                      <i class="far fa-calendar-alt me-2"></i>
+                                      {{ formatDateFR(other.created_at) }}
+
+                                    </div>
+                                    <div class="mb-1">
+                                      <span class="fw-bold">Motif&nbsp;:</span>
+                                      <span
+                                        class="badge bg-light border px-2 text-dark"
+                                        *ngIf="other.message"
+                                        >{{ other.message }}</span
+                                      >
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <ng-template #noOthers>
+                            <p class="text-muted ms-3">Aucune autre demande trouvée.</p>
+                          </ng-template>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

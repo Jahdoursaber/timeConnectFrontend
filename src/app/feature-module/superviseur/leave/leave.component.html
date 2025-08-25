@@ -1,0 +1,293 @@
+<div class="content">
+ <!-- Breadcrumb -->
+  <p-toast position="top-right"></p-toast>
+ <div class="d-md-flex d-block align-items-center justify-content-between mb-3">
+    <app-breadcrumbs title="Demande d'acompte" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+</div>
+<!-- /Breadcrumb -->
+
+
+
+    <!-- Leaves Info -->
+     <div class="row">
+        <div class="col-xl-4 col-md-6">
+            <div class="card flex-fill">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="text-start">
+                            <p class="mb-1">Demandes acceptées par superviseur</p>
+                            {{ LeavesStats.acceptedL1 }}
+                        </div>
+                        <div class="d-flex">
+                            <div>
+                              <span class="avatar avatar-lg bg-success flex-shrink-0">
+                                <i class="ti ti-check fs-16"></i>
+                              </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6">
+            <div class="card ">
+                <div class="card-body flex-fill">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="text-start">
+                            <p class="mb-1">Demandes en attente</p>
+                            {{ LeavesStats.pending }}
+                        </div>
+                        <div class="d-flex">
+                            <div>
+                              <span class="avatar avatar-lg bg-purple flex-shrink-0">
+                                <i class="ti ti-clock fs-16"></i>
+                              </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6">
+            <div class="card flex-fill">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="text-start">
+                           <p class="mb-1">Demandes refusées</p>
+                          {{ LeavesStats.rejected }}
+                        </div>
+                        <div class="d-flex">
+                            <div>
+                              <span class="avatar avatar-lg bg-danger flex-shrink-0">
+                                <i class="ti ti-x fs-16"></i>
+                              </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+     </div>
+     <!-- /Leaves Info -->
+
+    <!-- Leaves list -->
+    <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+            <div class="d-flex">
+                <h5 class="me-2">Liste des demandes des congés</h5>
+            </div>
+                <div class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3">
+                  <div class="dropdown me-3">
+                    <a href="javascript:void(0);" class="dropdown-toggle btn btn-sm btn-white d-inline-flex align-items-center"
+                    style="min-width: 120px; padding: 0.45rem 1rem;" data-bs-toggle="dropdown">
+                        Type de congé
+                    </a>
+                    <ul class="dropdown-menu  dropdown-menu-end p-3">
+                        <li *ngFor="let leaveType of leaves_types">
+                            <a href="javascript:void(0);" (click)="filterByLeaveType(leaveType.id!)" class="dropdown-item rounded-1">{{leaveType.name}}</a>
+                        </li>
+                    </ul>
+                </div>
+                  <div class="dropdown me-3 " >
+                      <a href="javascript:void(0);" class="dropdown-toggle btn btn-sm btn-white d-inline-flex align-items-center"
+                      style="min-width: 120px; padding: 0.45rem 1rem;" data-bs-toggle="dropdown">
+                          {{ getSelectedStatusLabel() }}
+                      </a>
+                      <ul class="dropdown-menu  dropdown-menu-end p-3" >
+
+                        <li *ngFor="let option of statusOptions">
+                          <a href="javascript:void(0);"
+                            class="dropdown-item rounded-1 d-flex justify-content-start align-items-center"
+                            (click)="filterByStatus(option.value!)">
+                            <span [ngClass]="getStatusClasses(option.value!).bgClass" class="rounded-circle d-flex justify-content-center align-items-center me-2">
+                              <i [ngClass]="getStatusClasses(option.value!).textClass" class="ti ti-point-filled"></i>
+                            </span>
+                            {{ option.label }}
+                          </a>
+                        </li>
+                      </ul>
+                  </div>
+                  <div class="icons-list-item" tabindex="0">
+                      <a href="javascript:void(0);"  style="padding: 0.64rem ;" class="btn btn-dark d-flex justify-content-center align-items-center me-2" (click)="resetFilters()" >
+                        <i class="ti ti-refresh" title="réinisitaliser le filtrage"></i>
+                      </a>
+                  </div>
+                </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="custom-datatable-filter ">
+                <div class="dataTables_wrapper dt-bootstrap5 no-footer">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6">
+                        <div class="dataTables_length">
+                            <label> Row Per Page
+                            <select [(ngModel)]="pageSize" (ngModelChange)="changePageSize(pageSize)" class="form-select form-select-sm">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            Entries
+                            </label>
+                        </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                        <div id="DataTables_Table_0_filter" class="dataTables_filter">
+                            <label>
+                                <input [(ngModel)]="searchDataValue" [ngModelOptions]="{ standalone: true }"
+                                    (ngModelChange)="searchData(searchDataValue)" type="search" class="form-control form-control-sm"
+                                    placeholder="Search..." />
+                            </label>
+                        </div>
+                    </div>
+                    </div>
+                    <div *ngIf="loading" class="d-flex justify-content-center py-5">
+                      <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Chargement…</span>
+                      </div>
+                    </div>
+                    <div class=" table-responsive">
+                        <table matSort (matSortChange)="sortData($event)" class="mat-sort table datanew table-center datatable dataTable  mb-0">
+                            <thead class="thead-light">
+                                <tr>
+
+                                    <th mat-sort-header="Nom">Nom/Prénom</th>
+                                    <th mat-sort-header="MessageTechnicien">Type congé</th>
+                                    <th mat-sort-header="Montant">Date de la demande</th>
+                                    <th mat-sort-header="MessageRH">Date début</th>
+                                    <th mat-sort-header="date">Date fin</th>
+                                    <th mat-sort-header="date">nb de jours</th>
+                                    <th mat-sort-header="Etat">Etat</th>
+                                    <th mat-sort-header="Actions">Actions</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let leave of tableData; trackBy: trackById">
+                                    <td>{{leave.full_name}}</td>
+
+                                    <td>{{leave.leave_type}}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center file-name-icon">
+                                                <div class="ms-2">
+                                                    <h6 class="fw-medium"><a href="javascript:void(0);">{{leave.created_at}}</a></h6>
+                                                    <span class="fs-12 fw-normal "></span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{leave.start}}</td>
+                                        <td>{{leave.end}}</td>
+                                        <td>{{leave.nb_of_days}}</td>
+                                        <td>
+                                            <span class="badge d-inline-flex align-items-center badge-xs" [ngClass]="leave.status === 'acceptedL1'?'badge-soft-success':
+                                            leave.status === 'acceptedL2'?'badge-soft-primary':
+                                            leave.status === 'proposed_other_date'?'badge-soft-warning':
+                                            leave.status === 'rejected'?'badge-soft-danger':
+                                            'badge-soft-purple'">
+                                                <i class="ti ti-point-filled me-1"></i>
+                                                {{
+                                                  leave.status === 'acceptedL1' ? 'Acceptée Superviseur' :
+                                                  leave.status === 'acceptedL2' ? 'Acceptée RH':
+                                                  leave.status === 'proposed_other_date' ? 'Proposition d\'une nouvelle date':
+                                                  leave.status === 'rejected' ? 'Refusée' :
+                                                  'En attente'
+                                                }}
+                                            </span>
+                                        </td>
+
+
+                                        <td>
+                                            <div class="action-icon d-inline-flex">
+                                                <a *ngIf="leave.status === 'pending'" (click)="loadLeaveById(leave.id)" href="javascript:void(0);" class="me-2" data-bs-toggle="modal" ><i class="ti ti-edit"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+
+                                    <tr *ngIf="!loading && tableData.length === 0">
+                                      <td colspan="10">
+                                        <h5 class="no-record">Aucun donnée trouvé</h5>
+                                      </td>
+                                    </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <app-custom-pagination></app-custom-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="edit_leave_id">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Edit Leave</h4>
+						<button type="button" class="btn-close custom-btn-close" data-bs-dismiss="modal" aria-label="Close">
+							<i class="ti ti-x"></i>
+						</button>
+					</div>
+					<form [formGroup]="myFormLeave" (ngSubmit)="onSubmit()">
+						<div class="modal-body pb-0">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="mb-3">
+										<label class="form-label" for="validationCustom02">Nom et Prénom</label>
+										<input type="text" class="form-control" formControlName="full_name" >
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="mb-3">
+										<label class="form-label"for="validationCustom03">Date début</label>
+										<input type="text" class="form-control" formControlName="start"  >
+									</div>
+								</div>
+                <div class="col-md-6">
+									<div class="mb-3">
+										<label class="form-label"for="validationCustom03">Date fin</label>
+										<input type="text" class="form-control" formControlName="end"  >
+									</div>
+								</div>
+                <div class="col-md-12">
+									<div class="mb-3">
+										<label class="form-label" for="validationCustom04">Message technicien</label>
+										<textarea class="form-control" rows="3" formControlName="message" ></textarea>
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="mb-3">
+										<label class="form-label" for="validationCustom04">Message Superviseur</label>
+										<textarea class="form-control" formControlName="reply" rows="3"></textarea>
+									</div>
+								</div>
+                <div class="col-md-12">
+									<div class="mb-3">
+										<label class="form-label" for="validationCustom01">Réponse</label>
+										 <mat-select placeholder="Choisir une réponse" formControlName="status" class="select custom-mat-select"
+                     [ngClass]="{'is-invalid': myFormLeave.get('status')?.invalid && myFormLeave.get('status')?.touched, 'is-valid': myFormLeave.get('status')?.valid}">
+											<mat-option *ngFor="let option of statusOptionsForForm" [value]="option.value">
+                        {{ option.label }}
+                      </mat-option>
+										</mat-select>
+                    <div *ngIf="myFormLeave.get('status')?.invalid && myFormLeave.get('status')?.touched" class="invalid-feedback">
+                    Ce champs est obligatoire
+                  </div>
+                  <div *ngIf="myFormLeave.get('status')?.valid" class="valid-feedback">
+                  </div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</button>
+							<button type="submit" class="btn btn-primary" data-bs-dismiss="modal" [disabled]="myFormLeave.invalid">Enregistrer</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>

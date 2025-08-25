@@ -1,0 +1,219 @@
+<div class="content">
+
+  <!-- Breadcrumb -->
+  <div class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3">
+    <app-breadcrumbs title="Dashboard" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+    <div class="d-flex my-xl-auto right-content align-items-center flex-wrap ">
+      <div class="input-icon mb-2 position-relative">
+        <span class="input-icon-addon">
+          <i class="ti ti-calendar text-gray-9"></i>
+        </span>
+
+      </div>
+      <app-collapse-header></app-collapse-header>
+    </div>
+  </div>
+  <!-- /Breadcrumb -->
+
+  <!-- Welcome Wrap -->
+  <div class="welcome-wrap mb-4">
+    <div class=" d-flex align-items-center justify-content-between flex-wrap">
+      <div class="mb-3">
+        <h2 class="mb-1 text-white">Bonjour, {{userAuthentified?.first_name}}</h2>
+      </div>
+
+    </div>
+    <div class="welcome-bg">
+      <img src="assets/img/bg/welcome-bg-02.svg" alt="img" class="welcome-bg-01">
+      <img src="assets/img/bg/welcome-bg-03.svg" alt="img" class="welcome-bg-02">
+      <img src="assets/img/bg/welcome-bg-01.svg" alt="img" class="welcome-bg-03">
+    </div>
+  </div>
+  <!-- /Welcome Wrap -->
+
+  <div class="row no-tooltip">
+
+    <!-- Total Companies -->
+    <div class="col-xl-3 col-sm-6 d-flex">
+      <div class="card flex-fill">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <span class="avatar avatar-md bg-dark mb-3">
+              <i class="ti ti-building fs-16"></i>
+            </span>
+
+          </div>
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <h2 class="mb-1">{{vehicleStats.total_vehicle}}</h2>
+              <p class="fs-13">Véhicules</p>
+            </div>
+            <apx-chart [series]="Areachart.series" [chart]="Areachart.chart" [colors]="Areachart.colors"
+              [fill]="Areachart.fill" [xaxis]="Areachart.xaxis" [stroke]="Areachart.stroke"
+              [tooltip]="Areachart.tooltip" [dataLabels]="Areachart.dataLabels"></apx-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /Total Companies -->
+
+    <!-- Active Companies -->
+    <div class="col-xl-3 col-sm-6 d-flex">
+      <div class="card flex-fill">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <span class="avatar avatar-md bg-dark mb-3">
+              <i class="ti ti-carousel-vertical fs-16"></i>
+            </span>
+
+          </div>
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <h2 class="mb-1">{{vehicleStats.assigned_vehicle}}</h2>
+              <p class="fs-13">Véhicules affectés</p>
+            </div>
+            <apx-chart [series]="Areachart2.series" [chart]="Areachart2.chart" [colors]="Areachart2.colors"
+              [fill]="Areachart2.fill" [xaxis]="Areachart2.xaxis" [stroke]="Areachart2.stroke"
+              [tooltip]="Areachart2.tooltip" [dataLabels]="Areachart2.dataLabels"></apx-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /Active Companies -->
+
+
+    <!-- Total Earnings -->
+    <div class="col-xl-3 col-sm-6 d-flex">
+      <div class="card flex-fill">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <span class="avatar avatar-md bg-dark mb-3">
+              <i class="ti ti-businessplan fs-16"></i>
+            </span>
+
+          </div>
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <h2 class="mb-1">{{vehicleStats.unassigned_vehicle}}</h2>
+              <p class="fs-13">Véhicules au park</p>
+            </div>
+            <apx-chart [series]="Areachart4.series" [chart]="Areachart4.chart" [colors]="Areachart4.colors"
+              [fill]="Areachart4.fill" [xaxis]="Areachart4.xaxis" [stroke]="Areachart4.stroke"
+              [tooltip]="Areachart4.tooltip" [dataLabels]="Areachart4.dataLabels"></apx-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /Total Earnings -->
+
+  </div>
+
+  <div class="row">
+
+    <!-- Companies -->
+    <div class="col-xxl-3 col-lg-6 d-flex">
+
+    </div>
+    <!-- /Companies -->
+
+    <!-- Revenue -->
+    <div class="col-lg-6 d-flex">
+
+    </div>
+    <!-- /Revenue -->
+    <div class="col-xxl-8 col-xl-7 d-flex">
+      <div class="card flex-fill">
+        <div class="card-header pb-2 d-flex align-items-center justify-content-between flex-wrap">
+          <h5 class="mb-2">Véhicules en déplacement</h5>
+          <div class="d-flex align-items-center">
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div class="col-sm-12 col-md-6">
+            <div id="DataTables_Table_0_filter" class="dataTables_filter">
+              <label>
+                <input [(ngModel)]="searchDataValue" [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="searchData(searchDataValue)" type="search" class="form-control form-control-sm"
+                  placeholder="Search..." />
+              </label>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-nowrap mb-0">
+              <thead>
+                <tr>
+                  <th>Plaque d'immatriculation</th>
+                  <th>Technicien</th>
+                  <th>Date affectation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let v of tableData;">
+                  <td>
+                    <a  class="link-default"> {{v.technicien_name}}</a>
+                  </td>
+                  <td>
+                    <h6 class="fw-medium">
+                      <a>{{v.date_affectation}} </a>
+                    </h6>
+                  </td>
+                  <td>
+                    {{v.plaque_immatriculation}}
+                  </td>
+
+                </tr>
+                <tr *ngIf="!loading && tableData.length === 0">
+                  <td colspan="10">
+                    <h5 class="no-record">Aucun donnée trouvé</h5>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Top Plans -->
+    <div class="col-xxl-3 col-xl-12 d-flex">
+      <div class="card flex-fill">
+        <div class="card-header pb-2 d-flex align-items-center justify-content-between flex-wrap">
+          <h5 class="mb-2">Répartition des véhicules</h5>
+
+        </div>
+        <div class="card-body">
+          <div class="card-body">
+            <apx-chart *ngIf="planOverview" [series]="planOverview.series" [chart]="planOverview.chart"
+              [colors]="planOverview.colors" [responsive]="planOverview.responsive"
+              [plotOptions]="planOverview.plotOptions" [stroke]="planOverview.stroke" [legend]="planOverview.legend"
+              [dataLabels]="planOverview.dataLabels" [labels]="planOverview.labels">
+            </apx-chart>
+
+            <ng-container *ngFor="let stat of vehicleStatusLegend">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <p class="f-13 mb-0">
+                  <i class="ti ti-circle-filled me-1" [ngStyle]="{'color': stat.color}"></i>
+                  {{ stat.label }}
+                </p>
+                <p class="f-13 fw-medium text-gray-9">{{ stat.value }}%</p>
+              </div>
+            </ng-container>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- /Top Plans -->
+
+  </div>
+
+  <div class="row">
+
+
+    <!-- /Recent Transactions -->
+
+
+
+  </div>
+
+</div>

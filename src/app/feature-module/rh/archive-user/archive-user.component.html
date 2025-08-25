@@ -1,0 +1,152 @@
+<div class="content">
+ <!-- Breadcrumb -->
+  <p-toast position="top-right"></p-toast>
+ <div class="d-md-flex d-block align-items-center justify-content-between mb-3">
+    <app-breadcrumbs title="Ancien Personnels" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
+<!-- /Breadcrumb -->
+
+
+    <!-- Leaves list -->
+    <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+            <div class="d-flex">
+                <h5 class="me-2">Liste des anciens personnels</h5>
+            </div>
+                <div class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3">
+                  <div class="dropdown me-3 " >
+
+                      <ul class="dropdown-menu  dropdown-menu-end p-3" >
+
+                        <li>
+                          <a href="javascript:void(0);"
+                            class="dropdown-item rounded-1 d-flex justify-content-start align-items-center"
+                            >
+                          </a>
+                        </li>
+                      </ul>
+                  </div>
+                  <div class="icons-list-item" tabindex="0">
+                      <a href="javascript:void(0);"  style="padding: 0.64rem ;" class="btn btn-dark d-flex justify-content-center align-items-center me-2" >
+                        <i class="ti ti-refresh" title="réinisitaliser le filtrage"></i>
+                      </a>
+                  </div>
+                </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="custom-datatable-filter ">
+                <div class="dataTables_wrapper dt-bootstrap5 no-footer">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6">
+                        <div class="dataTables_length">
+                            <label> Row Per Page
+                            <select [(ngModel)]="pageSize" (ngModelChange)="changePageSize(pageSize)" class="form-select form-select-sm">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            Entries
+                            </label>
+                        </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                        <div id="DataTables_Table_0_filter" class="dataTables_filter">
+                            <label>
+                                <input [(ngModel)]="searchDataValue" [ngModelOptions]="{ standalone: true }"
+                                    (ngModelChange)="searchData(searchDataValue)" type="search" class="form-control form-control-sm"
+                                    placeholder="Search..." />
+                            </label>
+                        </div>
+                    </div>
+                    </div>
+                    <div *ngIf="loading" class="d-flex justify-content-center py-5">
+                      <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Chargement…</span>
+                      </div>
+                    </div>
+                    <div class=" table-responsive">
+                        <table matSort (matSortChange)="sortData($event)" class="mat-sort table datanew table-center datatable dataTable  mb-0">
+                            <thead class="thead-light">
+                                <tr>
+
+                                    <th mat-sort-header="Matricule">Matricule</th>
+                                    <th mat-sort-header="Nom">Nom</th>
+                                    <th mat-sort-header="Prénom">Prénom</th>
+                                    <th mat-sort-header="MessageRH">Role</th>
+                                    <th mat-sort-header="Email">Email</th>
+                                    <th mat-sort-header="Téléphone">Téléphone</th>
+                                    <th mat-sort-header="Date d'entrée">Date d'entrée</th>
+                                    <th mat-sort-header="Date de sortie">Date de sortie</th>
+                                    <th mat-sort-header="Actions">Actions</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let user of tableData; trackBy: trackById">
+                                    <td>{{user.matricule}}</td>
+
+                                    <td>{{user.first_name}}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center file-name-icon">
+
+                                                <div class="ms-2">
+                                                    <h6 class="fw-medium"><a href="javascript:void(0);">{{user.last_name}}</a></h6>
+                                                    <span class="fs-12 fw-normal "></span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{user.role}}</td>
+                                        <td>{{user.email}}</td>
+                                        <td>
+                                            {{user.phone}}
+                                        </td>
+                                        <td>{{user.entry_date}}</td>
+                                        <td>{{user.deleted_at}}</td>
+
+                                        <td>
+                                            <div class="action-icon d-inline-flex">
+                                              <a href="javascript:void(0);"  (click)="confirmRestore(user.id)" data-bs-toggle="modal"  ><i class="ti ti-restore"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+
+                                    <tr *ngIf="!loading && tableData.length === 0">
+                                      <td colspan="10">
+                                        <h5 class="no-record">Aucun donnée trouvé</h5>
+                                      </td>
+                                    </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <app-custom-pagination></app-custom-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+  	<!-- Edit Employee Leaves -->
+    <div class="modal fade" id="restore_modal_user">
+  <div class="modal-dialog modal-dialog-modal-sm">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <span class="avatar avatar-xl bg-transparent-success text-success mb-3">
+          <i class="ti ti-refresh fs-36"></i> <!-- Icône restauration -->
+        </span>
+        <h4 class="mb-1">Confirmer la restauration</h4>
+        <p class="mb-3">Voulez-vous vraiment restaurer cet utilisateur ? Cette action réactivera le compte.</p>
+        <div class="d-flex justify-content-center">
+          <a href="javascript:void(0);" class="btn btn-light me-3" data-bs-dismiss="modal">Annuler</a>
+          <a href="javascript:void(0);" class="btn btn-success" (click)="restoreSelectedUser()" data-bs-dismiss="modal">Oui, Restaurer</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+		<!-- /Edit Employee Leaves -->
+
+
+
+</div>
