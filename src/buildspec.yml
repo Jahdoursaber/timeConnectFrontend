@@ -1,0 +1,51 @@
+version: 0.2
+
+env:
+  variables:
+    # Remplace par ton repo Docker Hub
+    IMAGE_NAME: saber22/timeconnect-frontend
+
+    # Choisis la sortie Angular à copier dans Apache :
+    #  - "template"  => build SPA classique (dist/template)
+    #  - "template/browser" => build avec sous-dossier browser (ex. SSR ou config spécifique)
+    ANGULAR_DIST: "template"
+
+    # Profil de build Angular (correspond à --configuration)
+    BUILD_CONFIGURATION: "production"
+
+  secrets-manager:
+    # Tes identifiants Docker Hub stockés dans Secrets Manager (secret JSON: { "username": "...", "password": "..." })
+    DOCKERHUB_USERNAME: dockerhub/creds:username
+    DOCKERHUB_PASSWORD: dockerhub/creds:password
+
+phases:
+  pre_build:
+    commands:
+      - echo "==> Docker login (Docker Hub)"
+      - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+      - echo "==> Calcul du tag d'image"
+      - COMMIT_SHA="${CODEBUILD_RESOLVED_SOURCE_VERSION:-manual}"
+      - IMAGE_TAG="$(echo "$COMMIT_SHA" | cut -c1-7)"
+      - if [ -z "$IMAGE_TAG" ] || [ "$IMAGE_TAG" = "manual" ]; then IMAGE_TAG="$(date -u +%Y%m%d%H%M%S)"; fi
+  build:
+    commands:
+      - echo "==> Build $IMAGE_NAME:$IMAGE_TAG (ANGULAR_DIST=$ANGULAR_DIST, CONFIG=$BUILD_CONFIGURATION)"
+      # --target prod pour prendre le stage final "prod" de ton Dockerfile
+      - docker build \
+          --target prod \
+          --build-arg ANGULAR_DIST="$ANGULAR_DIST" \
+          --build-arg BUILD_CONFIGURATION="$BUILD_CONFIGURATION" \
+          -t "$IMAGE_NAME:$IMAGE_TAG" \
+          -t "$IMAGE_NAME:latest" \
+          .
+  post_build:
+    commands:
+      - echo "==> Push des images"
+      - docker push "$IMAGE_NAME:$IMAGE_TAG"
+      - docker push "$IMAGE_NAME:latest"
+      # Petit artefact JSON pratique pour la suite du pipeline
+      - printf '{"image":"%s","tag":"%s"}\n' "$IMAGE_NAME" "$IMAGE_TAG" | tee image-frontend.json
+
+artifacts:
+  files:
+    - image-frontend.json
