@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { User } from '../../models/user';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
-  baseUrl= 'http://localhost:8000';
+  baseUrl= environment.apiUrl;
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
   private isAuthenticatedSubject: BehaviorSubject<boolean>;
@@ -25,7 +26,7 @@ export class LoginService {
     return this.currentUserSubject.value;
   }
   fetchUser(): Observable<User|null> {
-    return this.http.get<{ user: User, roles: string[] }>(`${this.baseUrl}/api/spa/user`, { withCredentials: true })
+    return this.http.get<{ user: User, roles: string[] }>(`${this.baseUrl}api/spa/user`, { withCredentials: true })
       .pipe(
         map(response => {
         const user = { ...response.user, role: response.roles[0] }; // rôle unique
@@ -42,7 +43,7 @@ export class LoginService {
 
   private getCsrf(): Observable<void> {
     return this.http.get<void>(
-      `${this.baseUrl}/sanctum/csrf-cookie`,
+      `${this.baseUrl}sanctum/csrf-cookie`,
       { withCredentials: true }
     );
   }
@@ -64,7 +65,7 @@ export class LoginService {
         });
 
         return this.http.post<{message: string; user: User}>(
-          `${this.baseUrl}/api/spa/login`,
+          `${this.baseUrl}api/spa/login`,
           { email, password },
           { withCredentials: true, headers });
         }),
@@ -86,7 +87,7 @@ export class LoginService {
   //   );
   // }
   logout(): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/api/spa/logout`, {}, { withCredentials: true })
+    return this.http.post<any>(`${this.baseUrl}api/spa/logout`, {}, { withCredentials: true })
       .pipe(
         tap(() => {
           this.currentUserSubject.next(null);
@@ -96,7 +97,7 @@ export class LoginService {
   }
 
   changePassword(newPassword: string, newPasswordConfirmation: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/api/spa/change-password`, {
+    return this.http.post(`${this.baseUrl}api/spa/change-password`, {
       new_password: newPassword,
       new_password_confirmation: newPasswordConfirmation
     }).pipe(
