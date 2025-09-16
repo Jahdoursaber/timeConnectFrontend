@@ -15,32 +15,31 @@ RUN npm run build -- --configuration ${BUILD_CONFIGURATION}
 ### PROD: Apache httpd pour SPA
 FROM httpd:2.4-alpine AS prod
 
-# Activer mod_rewrite + config "safe" pour une SPA
+# Activer mod_rewrite + réglages sûrs
 RUN sed -i 's/^#LoadModule rewrite_module/LoadModule rewrite_module/' /usr/local/apache2/conf/httpd.conf \
- && cat >> /usr/local/apache2/conf/httpd.conf <<'CONF'
-# Répertoire web
-<Directory "/usr/local/apache2/htdocs">
-  AllowOverride All
-  Require all granted
-  Options -Indexes +FollowSymLinks
-  DirectoryIndex index.html
-</Directory>
+ && printf '\nServerName localhost\nAddType application/javascript .js\n' >> /usr/local/apache2/conf/httpd.conf \
+ && awk 'BEGIN{print "<Directory \"/usr/local/apache2/htdocs\">"} \
+          {print} END{print "  AllowOverride All\n  Require all granted\n  Options -Indexes -MultiViews +FollowSymLinks\n  DirectoryIndex index.html\n</Directory>"}' \
+        /usr/local/apache2/conf/httpd.conf > /tmp/httpd.conf && mv /tmp/httpd.conf /usr/local/apache2/conf/httpd.conf
 
-# Fallback SPA : ne pas réécrire si le fichier ou le dossier existe
+# Copier le build Angular (adapte ANGULAR_DIST si besoin)
+ARG ANGULAR_DIST=template
+COPY --from=build /app/dist/${ANGULAR_DIST}/ /usr/local/apache2/htdocs/
+
+# Écrire le .htaccess *après* la copie du build
+RUN cat > /usr/local/apache2/htdocs/.htaccess <<'HTACCESS'
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  # 1) si fichier/dossier existe -> le servir
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
-  # Sinon, renvoyer index.html
+  # 2) ne PAS réécrire les assets (s'ils manquent => 404, pas index.html)
+  RewriteCond %{REQUEST_URI} \.(?:js|css|png|jpg|jpeg|gif|svg|ico|woff2?|woff|ttf|eot|map)$ [NC]
+  RewriteRule ^ - [L]
+  # 3) fallback SPA
   RewriteRule . /index.html [L]
 </IfModule>
-CONF
-
-# IMPORTANT : mets ici TA vraie sortie Angular
-# - SPA: dist/template
-# - SSR: dist/template/browser
-ARG ANGULAR_DIST=template
-COPY --from=build /app/dist/${ANGULAR_DIST}/ /usr/local/apache2/htdocs/
+HTACCESS
 
 EXPOSE 80
