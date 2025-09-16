@@ -1,3 +1,5 @@
 export const environment = {
-  baseUrl: 'http://localhost:8000/api/spa/',
+  production: true,
+  apiUrl: 'http://13.36.238.251:8000/',        
+  baseUrl: 'http://13.36.238.251:8000/api/spa/'
 }
