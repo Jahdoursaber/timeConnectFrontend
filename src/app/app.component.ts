@@ -41,9 +41,7 @@ export class AppComponent implements OnInit{
   }
   ngOnInit(): void {
     this.auth.fetchUser().subscribe();
-    this.notificationService.notifications$.subscribe(data => {
-    this.notifications = data;
-  });
+
 
   // Ajoute ceci juste pour tester l'affichage d'un toast
   setTimeout(() => {

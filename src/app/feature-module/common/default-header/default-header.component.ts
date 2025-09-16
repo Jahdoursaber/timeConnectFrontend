@@ -7,6 +7,7 @@ import { SideBarService } from '../../../shared/side-bar/side-bar.service';
 import { routes } from '../../../shared/routes/routes';
 import { LoginService } from '../../../services/user/login.service';
 import { User } from '../../../models/user';
+import { NotificationService, UiNotif } from '../../../services/notification/notification.service';
 
 @Component({
     selector: 'app-default-header',
@@ -27,12 +28,15 @@ export class DefaultHeaderComponent implements OnInit{
   public baricon = false;
   side_bar_data: MainMenu[] = [];
   userAuthentified: User | null = null;
+  unread = 0;
+  latest: UiNotif[] = [];
   constructor(
     private data: DataService,
     private sideBar: SideBarService,
     private common: CommonService,
     private router: Router,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private notif: NotificationService
 
   ) {
     this.common.base.subscribe((res: string) => {
@@ -76,10 +80,21 @@ export class DefaultHeaderComponent implements OnInit{
     }
 
   }
-  ngOnInit() {
+  async ngOnInit() {
     this.getUserAuthentified();
-  }
 
+    await this.notif.init();
+  this.notif.unreadCount$.subscribe(c => this.unread = c);
+  this.notif.latest$.subscribe(list => this.latest = list);
+  }
+  async openItem(n: UiNotif) {
+    if (n.id) {
+      await this.notif.markAsRead(n.id);
+    }
+    if (n.url) {
+      this.router.navigateByUrl(n.url);
+    }
+  }
   public toggleSideBar(): void {
     this.sideBar.switchSideMenuPosition();
   }

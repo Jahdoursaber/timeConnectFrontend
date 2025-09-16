@@ -1,0 +1,55 @@
+/* Conteneur cloche */
+.notif-bell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  color: #6b6f76; /* couleur cloche */
+  right:20px;
+}
+
+/* Icône cloche (tabler-icons / ti) */
+.notif-bell .ti {
+  font-size: 22px;
+  line-height: 1;
+
+}
+
+/* Badge compteur rouge style “bulles” */
+.notif-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(35%, -35%);
+  background: #ff4d4f;           /* rouge */
+  color: #fff;                    /* texte blanc */
+  font-weight: 800;               /* chiffres épais (comme l’image) */
+  font-size: 12px;
+  line-height: 18px;
+  min-width: 22px;                /* diamètre mini pour 1 chiffre */
+  height: 18px;
+  padding: 0 6px;                 /* devient pilule si > 1 chiffre */
+  border-radius: 999px;           /* cercle/pilule */
+  text-align: center;
+  white-space: nowrap;
+
+  /* anneau blanc + halo doux comme sur l’image */
+  outline: 2px solid #fff;        /* anneau blanc fin */
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,0.65),  /* halo externe */
+    0 2px 6px rgba(0,0,0,0.15);        /* légère ombre */
+}
+
+/* si tu veux un badge plus compact (optionnel) */
+@media (max-width: 576px) {
+  .notif-badge {
+    font-size: 11px;
+    line-height: 16px;
+    min-width: 20px;
+    height: 16px;
+    padding: 0 5px;
+  }
+}
