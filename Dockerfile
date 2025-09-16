@@ -15,31 +15,34 @@ RUN npm run build -- --configuration ${BUILD_CONFIGURATION}
 ### PROD: Apache httpd pour SPA
 FROM httpd:2.4-alpine AS prod
 
-# Activer mod_rewrite + réglages sûrs
+# 1) Activer mod_rewrite et inclure notre conf SPA
 RUN sed -i 's/^#LoadModule rewrite_module/LoadModule rewrite_module/' /usr/local/apache2/conf/httpd.conf \
- && printf '\nServerName localhost\nAddType application/javascript .js\n' >> /usr/local/apache2/conf/httpd.conf \
- && awk 'BEGIN{print "<Directory \"/usr/local/apache2/htdocs\">"} \
-          {print} END{print "  AllowOverride All\n  Require all granted\n  Options -Indexes -MultiViews +FollowSymLinks\n  DirectoryIndex index.html\n</Directory>"}' \
-        /usr/local/apache2/conf/httpd.conf > /tmp/httpd.conf && mv /tmp/httpd.conf /usr/local/apache2/conf/httpd.conf
+ && printf '\nServerName localhost\nInclude conf/extra/spa.conf\n' >> /usr/local/apache2/conf/httpd.conf
 
-# Copier le build Angular (adapte ANGULAR_DIST si besoin)
-ARG ANGULAR_DIST=template
-COPY --from=build /app/dist/${ANGULAR_DIST}/ /usr/local/apache2/htdocs/
+# 2) Conf SPA sûre (pas de Listen ici, pas de .htaccess requis)
+RUN mkdir -p /usr/local/apache2/conf/extra \
+ && cat > /usr/local/apache2/conf/extra/spa.conf <<'CONF'
+<Directory "/usr/local/apache2/htdocs">
+  AllowOverride None
+  Require all granted
+  Options -Indexes +FollowSymLinks
+  DirectoryIndex index.html
+</Directory>
 
-# Écrire le .htaccess *après* la copie du build
-RUN cat > /usr/local/apache2/htdocs/.htaccess <<'HTACCESS'
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  # 1) si fichier/dossier existe -> le servir
+  # servir tel quel si fichier/dossier existe
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
-  # 2) ne PAS réécrire les assets (s'ils manquent => 404, pas index.html)
-  RewriteCond %{REQUEST_URI} \.(?:js|css|png|jpg|jpeg|gif|svg|ico|woff2?|woff|ttf|eot|map)$ [NC]
-  RewriteRule ^ - [L]
-  # 3) fallback SPA
+  # fallback SPA
   RewriteRule . /index.html [L]
 </IfModule>
-HTACCESS
+CONF
+
+# 3) Copier le build Angular
+#    ANGULAR_DIST = "template"  (ou "template/browser" selon ton output)
+ARG ANGULAR_DIST=template
+COPY --from=build /app/dist/${ANGULAR_DIST}/ /usr/local/apache2/htdocs/
 
 EXPOSE 80
