@@ -12,14 +12,23 @@ ARG BUILD_CONFIGURATION=production
 ENV NODE_OPTIONS=--max-old-space-size=4096
 RUN npm run build -- --configuration ${BUILD_CONFIGURATION}
 
-### PROD: Apache httpd pour SPA
+# Normalise le chemin de sortie (SPA: dist/template | SSR: dist/template/browser)
+RUN set -eux; \
+    if [ -d "dist/${ANGULAR_DIST}/browser" ]; then \
+      mv "dist/${ANGULAR_DIST}/browser" /dist_out; \
+    else \
+      mv "dist/${ANGULAR_DIST}" /dist_out; \
+    fi; \
+    test -f /dist_out/index.html || { echo "ERREUR: index.html manquant dans /dist_out"; ls -laR /dist_out || true; exit 1; }
+
+######## PROD (Apache) ########
 FROM httpd:2.4-alpine AS prod
 
-# 1) Activer mod_rewrite et inclure notre conf SPA
+# Active mod_rewrite + inclut notre conf
 RUN sed -i 's/^#LoadModule rewrite_module/LoadModule rewrite_module/' /usr/local/apache2/conf/httpd.conf \
  && printf '\nServerName localhost\nInclude conf/extra/spa.conf\n' >> /usr/local/apache2/conf/httpd.conf
 
-# 2) Conf SPA sûre (pas de Listen ici, pas de .htaccess requis)
+# Conf SPA sûre (pas de Listen ici)
 RUN mkdir -p /usr/local/apache2/conf/extra \
  && cat > /usr/local/apache2/conf/extra/spa.conf <<'CONF'
 <Directory "/usr/local/apache2/htdocs">
@@ -35,14 +44,18 @@ RUN mkdir -p /usr/local/apache2/conf/extra \
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
+  # ne pas réécrire les assets (sinon 404, pas index.html)
+  RewriteCond %{REQUEST_URI} \.(?:js|css|png|jpg|jpeg|gif|svg|ico|woff2?|woff|ttf|eot|map)$ [NC]
+  RewriteRule ^ - [L]
   # fallback SPA
   RewriteRule . /index.html [L]
 </IfModule>
 CONF
 
-# 3) Copier le build Angular
-#    ANGULAR_DIST = "template"  (ou "template/browser" selon ton output)
-ARG ANGULAR_DIST=template
-COPY --from=build /app/dist/${ANGULAR_DIST}/ /usr/local/apache2/htdocs/
+# Nettoie le docroot pour supprimer "It works!"
+RUN rm -rf /usr/local/apache2/htdocs/*
+
+# Copie l’output Angular normalisé
+COPY --from=build /dist_out/ /usr/local/apache2/htdocs/
 
 EXPOSE 80
