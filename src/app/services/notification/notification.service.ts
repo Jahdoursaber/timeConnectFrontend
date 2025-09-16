@@ -4,7 +4,7 @@ import Pusher from 'pusher-js';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { LoginService } from '../user/login.service';
 import { ToastUtilService } from '../toastUtil/toast-util.service';
-import { environment } from '../../../../environment';
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 const TITLE_BY_TYPE: Record<string, string> = {

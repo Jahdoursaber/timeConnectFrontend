@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../../../environment';
+import { environment } from '../../../environments/environment';
 import { map, Observable, catchError, throwError, tap } from 'rxjs';
 import { User } from '../../models/user';
 

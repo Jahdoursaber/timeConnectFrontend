@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../../environment';
+import { environment } from '../../../environments/environment';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { VehicleBrand } from '../../models/vehicleBrand';
 import { catchError, map, Observable, throwError } from 'rxjs';
